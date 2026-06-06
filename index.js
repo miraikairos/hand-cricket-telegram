@@ -499,12 +499,12 @@ ${battingPlayers[0].name}
 ${bowlingPlayers[0].name}`
   );
 
-  bot.sendMessage(
-    msg.chat.id,
-    "Choose your number",
-    getNumberButtons(roomCode)
-  );
+ bot.sendMessage(
+  msg.chat.id,
+  `🏏 Batter sends number in group
 
+🥎 Bowler receives buttons in DM`
+);
 });
 
 // BOWL FIRST
@@ -549,11 +549,10 @@ ${battingPlayers[0].name}
 ${bowlingPlayers[0].name}`
   );
 
- bot.sendMessage(
-  chat,
-  `${tossWinner.name} bats first
+bot.sendMessage(
+  msg.chat.id,
+  `🏏 Batter sends number in group
 
-🏏 Batter sends number in group
 🥎 Bowler receives buttons in DM`
 );
 });
