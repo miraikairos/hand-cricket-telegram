@@ -164,7 +164,9 @@ function sendBowlerDM(
 
     getBowlingButtons(roomCode)
 
-  ).catch(() => {
+  )
+  
+  .catch(() => {
 
     bot.sendMessage(
 
@@ -176,9 +178,19 @@ https://t.me/strangerfrndmusicbot
 
 Then press /start`
 
+
     );
 
   });
+  bot.sendMessage(
+
+  groupChat,
+
+`🏏 ${bowler.name} selected bowling number
+
+🏏 Batter send your number now`
+
+);
 
 }
 
@@ -347,7 +359,7 @@ bot.onText(/\/teamcreate/, (msg) => {
     String(msg.chat.id);
 
   rooms[roomCode] = {
-
+ groupChat: msg.chat.id,
     mode: "team",
 
     teamA: [],
@@ -855,7 +867,7 @@ bot.on("callback_query", (query) => {
     playTeamBall(
       room,
       roomCode,
-      query.message.chat.id,
+      room.groupChat,
       batsman,
       bowler
     );
