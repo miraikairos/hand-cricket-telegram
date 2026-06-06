@@ -772,7 +772,7 @@ if (room.mode === "normal") {
 
 bot.sendVideo(
   query.message.chat.id,
-  "videos/wait.mp4"
+  "wait.mp4"
 );
 
 bot.sendMessage(
@@ -1043,7 +1043,7 @@ bot.sendVideo(
 
   bot.sendVideo(
   query.message.chat.id,
-  "videos/wait.mp4"
+  "wait.mp4"
 );
 
 bot.sendMessage(
