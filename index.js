@@ -103,41 +103,41 @@ function getBowlingButtons(roomCode) {
 // SEND RUN VIDEOS
 // ======================================
 
-function sendRunVideo(chatId, runs) {
+async function sendRunVideo(chatId, runs){
 
   if (runs === 1) {
 
-    bot.sendVideo(chatId, "1-run.mp4");
+ return bot.sendVideo(chatId, "1-run.mp4");
 
   }
 
   else if (runs === 2) {
 
-    bot.sendVideo(chatId, "2-run.mp4");
+    return bot.sendVideo(chatId, "2-run.mp4");
 
   }
 
   else if (runs === 3) {
 
-    bot.sendVideo(chatId, "3-run.mp4");
+   return  bot.sendVideo(chatId, "3-run.mp4");
 
   }
 
   else if (runs === 4) {
 
-    bot.sendVideo(chatId, "4-run.mp4");
+  return   bot.sendVideo(chatId, "4-run.mp4");
 
   }
 
   else if (runs === 5) {
 
-    bot.sendPhoto(chatId, "5-run.png");
+ return    bot.sendPhoto(chatId, "5-run.png");
 
   }
 
   else if (runs === 6) {
 
-    bot.sendVideo(
+   return  bot.sendVideo(
       chatId,
       "6-run.mp4"
     );
@@ -157,19 +157,14 @@ function sendBowlerDM(
 ) {
 
   bot.sendMessage(
-
     bowler.id,
-
     "🥎 Choose Bowling Number",
-
     getBowlingButtons(roomCode)
-
   )
-  
+
   .catch(() => {
 
     bot.sendMessage(
-
       groupChat,
 
 `⚠️ ${bowler.name} must start bot in DM first
@@ -177,20 +172,9 @@ function sendBowlerDM(
 https://t.me/strangerfrndmusicbot
 
 Then press /start`
-
-
     );
 
   });
-  bot.sendMessage(
-
-  groupChat,
-
-`🏏 ${bowler.name} selected bowling number
-
-🏏 Batter send your number now`
-
-);
 
 }
 
@@ -709,6 +693,13 @@ bot.on("message", (msg) => {
         room.choices[
           batsman.id
         ] = number;
+        bot.sendMessage(
+  query.message.chat.id,
+
+`🥎 ${bowler.name} selected bowling number
+
+🏏 ${batsman.name}, send your number now`
+);
 
       }
 
@@ -736,7 +727,13 @@ bot.on("message", (msg) => {
         room.choices[
           batsman.id
         ] = number;
+       bot.sendMessage(
+  query.message.chat.id,
 
+`🥎 ${bowler.name} selected bowling number
+
+🏏 ${batsman.name}, send your number now`
+);
       }
 
     }
@@ -845,6 +842,13 @@ bot.on("callback_query", (query) => {
     room.choices[
       bowler.id
     ] = number;
+    bot.sendMessage(
+  query.message.chat.id,
+
+`🥎 ${bowler.name} selected bowling number
+
+🏏 ${batsman.name}, send your number now`
+);
 
     if (
       room.choices[
@@ -977,10 +981,10 @@ ${room.target}
 
     room.score += bat;
 
-    sendRunVideo(
-      chatId,
-      bat
-    );
+    await sendRunVideo(
+  chatId,
+  bat
+);
 
     message +=
       `🏏 +${bat} Runs`;
@@ -1026,15 +1030,15 @@ ${room.score}`;
       p => p.id === room.bowling
     );
 
-  bot.sendVideo(
-    chatId,
-    "wait.mp4"
-  );
+await bot.sendMessage(
+  chatId,
+  message
+);
 
-  bot.sendMessage(
-    chatId,
-    message
-  );
+await bot.sendVideo(
+  chatId,
+  "wait.mp4"
+);
 
   sendBowlerDM(
     newBowler,
