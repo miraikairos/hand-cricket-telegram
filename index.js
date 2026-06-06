@@ -78,8 +78,9 @@ bot.onText(/\/create/, (msg) => {
     wickets: 0,
     balls: 0,
 
-    overs: 2,
-    maxBalls: 12,
+  overs: null,
+maxBalls: null,
+waitingOvers: true,
 
     choices: {},
 
@@ -99,8 +100,41 @@ Join using:
 });
 
 // TEAM CREATE
+bot.onText(/\/overs (.+)/, (msg, match) => {
+
+  const roomCode = msg.chat.id;
+
+  if (!rooms[roomCode]) return;
+
+  const room = rooms[roomCode];
+
+  const overs = Number(match[1]);
+
+  room.overs = overs;
+  room.maxBalls = overs * 6;
+
+  room.waitingOvers = false;
+
+  bot.sendMessage(
+    msg.chat.id,
+    `✅ Match Overs Set To ${overs}`
+  );
+
+});
 bot.onText(/\/teamcreate/, (msg) => {
 
+// SET OVERS
+
+ bot.sendMessage(
+  msg.chat.id,
+  `Choose Overs:
+
+/overs 1
+/overs 2
+/overs 3
+/overs 4
+/overs 5`
+);
   const roomCode = msg.chat.id;
 
 rooms[roomCode] = {
@@ -124,9 +158,9 @@ rooms[roomCode] = {
     wickets: 0,
 
     balls: 0,
-    overs: 2,
-    maxBalls: 12,
-
+   overs: null,
+maxBalls: null,
+waitingOvers: true,
     target: 0,
 
     choices: {},
@@ -215,11 +249,7 @@ bot.onText(/\/join (.+)/, (msg, match) => {
 ${tossWinner.name} bats first`
     );
 
-    bot.sendMessage(
-      chat,
-      "Choose your number",
-      getNumberButtons(roomCode)
-    );
+  
 
   });
 
@@ -349,18 +379,23 @@ bot.onText(/\/startmatch/, (msg, match) => {
     return;
   }
 
-  room.started = true;
+room.started = true;
 
-  bot.sendMessage(
+// RANDOM TOSS
+const tossWinner =
+  Math.random() < 0.5 ? "A" : "B";
+
+room.tossWinner = tossWinner;
+
+bot.sendMessage(
   msg.chat.id,
-  `🏏 TEAM MATCH STARTED
+  `🪙 Toss Won By Team ${tossWinner}
 
-Team A Players: ${room.teamA.length}
-Team B Players: ${room.teamB.length}
+Choose:
 
-🏏 Batsman: ${room.teamA[0].name}
-
-🥎 Bowler: ${room.teamB[0].name}`
+/bat
+or
+/bowl`
 );
 
   bot.sendMessage(
@@ -370,8 +405,137 @@ Team B Players: ${room.teamB.length}
   );
 
 });
+// BAT FIRST
+bot.onText(/\/bat/, (msg) => {
 
+  const roomCode = msg.chat.id;
+
+  const room = rooms[roomCode];
+
+  if (!room) return;
+
+  room.battingTeam = room.tossWinner;
+
+  room.bowlingTeam =
+    room.tossWinner === "A"
+      ? "B"
+      : "A";
+
+  const battingPlayers =
+    room.battingTeam === "A"
+      ? room.teamA
+      : room.teamB;
+
+  const bowlingPlayers =
+    room.bowlingTeam === "A"
+      ? room.teamA
+      : room.teamB;
+
+  bot.sendMessage(
+    msg.chat.id,
+    `🏏 MATCH STARTED
+
+🎯 Overs: ${room.overs}
+
+🏏 Batting Team: ${room.battingTeam}
+🥎 Bowling Team: ${room.bowlingTeam}
+
+🏏 Batsman:
+${battingPlayers[0].name}
+
+🥎 Bowler:
+${bowlingPlayers[0].name}`
+  );
+
+  bot.sendMessage(
+    msg.chat.id,
+    "Choose your number",
+    getNumberButtons(roomCode)
+  );
+
+});
+
+// BOWL FIRST
+bot.onText(/\/bowl/, (msg) => {
+
+  const roomCode = msg.chat.id;
+
+  const room = rooms[roomCode];
+
+  if (!room) return;
+
+  room.bowlingTeam = room.tossWinner;
+
+  room.battingTeam =
+    room.tossWinner === "A"
+      ? "B"
+      : "A";
+
+  const battingPlayers =
+    room.battingTeam === "A"
+      ? room.teamA
+      : room.teamB;
+
+  const bowlingPlayers =
+    room.bowlingTeam === "A"
+      ? room.teamA
+      : room.teamB;
+
+  bot.sendMessage(
+    msg.chat.id,
+    `🏏 MATCH STARTED
+
+🎯 Overs: ${room.overs}
+
+🏏 Batting Team: ${room.battingTeam}
+🥎 Bowling Team: ${room.bowlingTeam}
+
+🏏 Batsman:
+${battingPlayers[0].name}
+
+🥎 Bowler:
+${bowlingPlayers[0].name}`
+  );
+
+  bot.sendMessage(
+    msg.chat.id,
+    "Choose your number",
+    getNumberButtons(roomCode)
+  );
+
+});
 // GAMEPLAY
+function startTeamGame(room, chatId) {
+
+  const battingPlayers =
+    room.battingTeam === "A"
+      ? room.teamA
+      : room.teamB;
+
+  const bowlingPlayers =
+    room.bowlingTeam === "A"
+      ? room.teamA
+      : room.teamB;
+
+  bot.sendMessage(
+    chatId,
+    `🏏 MATCH STARTED
+
+🎯 Overs: ${room.overs}
+
+🏏 Batting Team: ${room.battingTeam}
+🥎 Bowling Team: ${room.bowlingTeam}
+
+🏏 Batsman:
+${battingPlayers[0].name}
+
+🥎 Bowler:
+${bowlingPlayers[0].name}`
+  );
+
+ 
+
+}
 bot.on("callback_query", (query) => {
 
   const data = query.data;
@@ -535,8 +699,25 @@ let message =
 
 }
 
-    message +=
-      `\nScore: ${room.score}/${room.wickets}`;
+  message +=
+  `\nScore: ${room.score}/${room.wickets}`;
+
+if (room.innings === 2) {
+
+  const runsNeeded =
+    room.target - room.score;
+
+  const ballsLeft =
+    room.maxBalls - room.balls;
+const requiredRunRate =
+  (runsNeeded / (ballsLeft / 6)).toFixed(2);
+  message +=
+    `\n🎯 Target: ${room.target}`;
+
+  message +=
+    `\nNeed ${runsNeeded} runs in ${ballsLeft} balls`;
+
+}
 
     const inningsEnd =
       room.currentBatsman >= battingPlayers.length ||
