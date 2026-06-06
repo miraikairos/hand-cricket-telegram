@@ -1,10 +1,13 @@
 const TelegramBot = require("node-telegram-bot-api");
 const token = process.env.BOT_TOKEN;
 
-const bot = new TelegramBot(token, {
-  polling: true,
-});
+const express = require("express");
 
+const app = express();
+
+const bot = new TelegramBot(token);
+
+app.use(express.json());
 const rooms = {};
 
 function createRoomCode() {
@@ -631,3 +634,22 @@ bot.sendVideo(
 });
 
 console.log("🏏 Hand Cricket Bot Running");
+app.post(`/bot${token}`, (req, res) => {
+
+  bot.processUpdate(req.body);
+
+  res.sendStatus(200);
+
+});
+
+app.get("/", (req, res) => {
+  res.send("Bot Running");
+});
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, async () => {
+
+  console.log(`Server running on ${PORT}`);
+
+});
