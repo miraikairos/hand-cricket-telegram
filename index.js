@@ -236,30 +236,34 @@ bot.onText(/\/join (.+)/, (msg, match) => {
 
   room.chats.push(msg.chat.id);
 
-  room.started = true;
+ room.started = true;
 
-  const tossWinner =
-    room.players[Math.floor(Math.random() * 2)];
+const tossWinner =
+  room.players[Math.floor(Math.random() * 2)];
 
-  room.batting = tossWinner.id;
+room.batting = tossWinner.id;
 
-  room.bowling =
-    room.players.find(
-      p => p.id !== tossWinner.id
-    ).id;
+room.bowling =
+  room.players.find(
+    p => p.id !== tossWinner.id
+  ).id;
 
-  room.chats.forEach((chat) => {
+room.chats.forEach((chat) => {
 
-    bot.sendMessage(
-      chat,
-      `🏏 Match Started
+  bot.sendMessage(
+    chat,
+    `🏏 Match Started
 
 ${tossWinner.name} bats first`
-    );
+  );
 
-  
+  bot.sendMessage(
+    chat,
+    "Choose your number",
+    getNumberButtons(roomCode)
+  );
 
-  });
+});
 
 });
 
