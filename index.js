@@ -125,16 +125,7 @@ bot.onText(/\/teamcreate/, (msg) => {
 
 // SET OVERS
 
- bot.sendMessage(
-  msg.chat.id,
-  `Choose Overs:
 
-/overs 1
-/overs 2
-/overs 3
-/overs 4
-/overs 5`
-);
   const roomCode = msg.chat.id;
 
 rooms[roomCode] = {
@@ -171,6 +162,7 @@ waitingOvers: true,
   bot.sendMessage(
     msg.chat.id,
     `🏏 TEAM MATCH CREATED
+    
 
 Join Team A:
 /joinA
@@ -181,6 +173,16 @@ Join Team B:
 Start Match:
 /startmatch`
   );
+   bot.sendMessage(
+  msg.chat.id,
+  `Choose Overs:
+
+/overs 1
+/overs 2
+/overs 3
+/overs 4
+/overs 5`
+);
 
 });
 
