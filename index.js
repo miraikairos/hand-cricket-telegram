@@ -342,7 +342,7 @@ ${bowler.name}
 // ======================================
 
 bot.onText(/\/teamcreate/, (msg) => {
-
+ console.log("TEAMCREATE WORKING");
   const roomCode =
     String(msg.chat.id);
 
