@@ -119,6 +119,22 @@ bot.onText(/\/overs (.+)/, (msg, match) => {
     msg.chat.id,
     `✅ Match Overs Set To ${overs}`
   );
+  // RANDOM TOSS
+const tossWinner =
+  Math.random() < 0.5 ? "A" : "B";
+
+room.tossWinner = tossWinner;
+
+bot.sendMessage(
+  msg.chat.id,
+  `🪙 Toss Won By Team ${tossWinner}
+
+Choose:
+
+/bat
+or
+/bowl`
+);
 
 });
 bot.onText(/\/teamcreate/, (msg) => {
@@ -173,17 +189,7 @@ Join Team B:
 Start Match:
 /startmatch`
   );
-   bot.sendMessage(
-  msg.chat.id,
-  `Choose Overs:
-
-/overs 1
-/overs 2
-/overs 3
-/overs 4
-/overs 5`
-);
-
+ 
 });
 
 // JOIN NORMAL MATCH
@@ -384,27 +390,19 @@ bot.onText(/\/startmatch/, (msg, match) => {
 room.started = true;
 
 // RANDOM TOSS
-const tossWinner =
-  Math.random() < 0.5 ? "A" : "B";
-
-room.tossWinner = tossWinner;
+room.started = true;
 
 bot.sendMessage(
   msg.chat.id,
-  `🪙 Toss Won By Team ${tossWinner}
+  `Choose Overs:
 
-Choose:
-
-/bat
-or
-/bowl`
+/overs 1
+/overs 2
+/overs 3
+/overs 5`
 );
 
-  bot.sendMessage(
-    msg.chat.id,
-    "Choose your number",
-    getNumberButtons(roomCode)
-  );
+
 
 });
 // BAT FIRST
