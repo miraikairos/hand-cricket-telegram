@@ -1,3 +1,22 @@
+/*
+
+🏏 FULL HAND CRICKET TELEGRAM BOT
+
+✅ 1v1 Mode
+✅ Team Mode
+✅ Overs
+✅ Toss
+✅ Bat / Bowl
+✅ DM Bowling
+✅ Group Batting
+✅ Innings
+✅ Target Chasing
+✅ Videos
+✅ Webhook
+✅ Render Ready
+
+*/
+
 const TelegramBot = require("node-telegram-bot-api");
 const express = require("express");
 
@@ -11,9 +30,9 @@ app.use(express.json());
 
 const rooms = {};
 
-// =========================
-// CREATE ROOM CODE
-// =========================
+// ======================================
+// ROOM CODE
+// ======================================
 
 function createRoomCode() {
 
@@ -24,9 +43,9 @@ function createRoomCode() {
 
 }
 
-// =========================
+// ======================================
 // BOWLING BUTTONS
-// =========================
+// ======================================
 
 function getBowlingButtons(roomCode) {
 
@@ -80,9 +99,92 @@ function getBowlingButtons(roomCode) {
 
 }
 
-// =========================
+// ======================================
+// SEND RUN VIDEOS
+// ======================================
+
+function sendRunVideo(chatId, runs) {
+
+  if (runs === 1) {
+
+    bot.sendVideo(chatId, "1-run.mp4");
+
+  }
+
+  else if (runs === 2) {
+
+    bot.sendVideo(chatId, "2-run.mp4");
+
+  }
+
+  else if (runs === 3) {
+
+    bot.sendVideo(chatId, "3-run.mp4");
+
+  }
+
+  else if (runs === 4) {
+
+    bot.sendVideo(chatId, "4-run.mp4");
+
+  }
+
+  else if (runs === 5) {
+
+    bot.sendPhoto(chatId, "5-run.png");
+
+  }
+
+  else if (runs === 6) {
+
+    bot.sendVideo(
+      chatId,
+      "6-run.mp4"
+    );
+
+  }
+
+}
+
+// ======================================
+// SEND BOWLER DM
+// ======================================
+
+function sendBowlerDM(
+  bowler,
+  roomCode,
+  groupChat
+) {
+
+  bot.sendMessage(
+
+    bowler.id,
+
+    "🥎 Choose Bowling Number",
+
+    getBowlingButtons(roomCode)
+
+  ).catch(() => {
+
+    bot.sendMessage(
+
+      groupChat,
+
+`⚠️ ${bowler.name} must start bot in DM first
+
+https://t.me/strangerfrndmusicbot
+
+Then press /start`
+
+    );
+
+  });
+
+}
+
+// ======================================
 // START
-// =========================
+// ======================================
 
 bot.onText(/\/start/, (msg) => {
 
@@ -90,23 +192,27 @@ bot.onText(/\/start/, (msg) => {
 
     msg.chat.id,
 
-`🏏 Hand Cricket Arena
+`🏏 HAND CRICKET ARENA
 
-/create - 1v1 Match`
+/create - 1v1 Match
+
+/teamcreate - Team Match`
 
   );
 
 });
 
-// =========================
-// CREATE MATCH
-// =========================
+// ======================================
+// CREATE 1V1
+// ======================================
 
 bot.onText(/\/create/, (msg) => {
 
   const roomCode = createRoomCode();
 
   rooms[roomCode] = {
+
+    mode: "normal",
 
     players: [
 
@@ -140,16 +246,16 @@ bot.onText(/\/create/, (msg) => {
 
 Code: ${roomCode}
 
-Join using:
+Join:
 /join ${roomCode}`
 
   );
 
 });
 
-// =========================
-// JOIN MATCH
-// =========================
+// ======================================
+// JOIN 1V1
+// ======================================
 
 bot.onText(/\/join (.+)/, (msg, match) => {
 
@@ -186,8 +292,6 @@ bot.onText(/\/join (.+)/, (msg, match) => {
 
   });
 
-  // RANDOM TOSS
-
   const tossWinner =
     room.players[Math.floor(Math.random() * 2)];
 
@@ -212,7 +316,7 @@ bot.onText(/\/join (.+)/, (msg, match) => {
 
     msg.chat.id,
 
-`🏏 Match Started
+`🏏 MATCH STARTED
 
 🏏 Batter:
 ${batsman.name}
@@ -225,43 +329,344 @@ ${bowler.name}
 
   );
 
-  // SEND BOWLER DM
-
-  bot.sendMessage(
-
-    bowler.id,
-
-    "🥎 Choose Bowling Number",
-
-    getBowlingButtons(roomCode)
-
-  ).catch(() => {
-
-    bot.sendMessage(
-
-      msg.chat.id,
-
-`⚠️ ${bowler.name} must start bot in DM first
-
-https://t.me/strangerfrndmusicbot`
-
-    );
-
-  });
+  sendBowlerDM(
+    bowler,
+    roomCode,
+    msg.chat.id
+  );
 
 });
 
-// =========================
-// BATSMAN TYPES NUMBER
-// =========================
+// ======================================
+// TEAM CREATE
+// ======================================
+
+bot.onText(/\/teamcreate/, (msg) => {
+
+  const roomCode =
+    String(msg.chat.id);
+
+  rooms[roomCode] = {
+
+    mode: "team",
+
+    teamA: [],
+    teamB: [],
+
+    innings: 1,
+
+    battingTeam: null,
+    bowlingTeam: null,
+
+    currentBatsman: 0,
+    currentBowler: 0,
+
+    overs: null,
+    maxBalls: null,
+
+    score: 0,
+    wickets: 0,
+    balls: 0,
+
+    target: 0,
+
+    choices: {}
+
+  };
+
+  bot.sendMessage(
+
+    msg.chat.id,
+
+`🏏 TEAM MATCH CREATED
+
+Join Team A:
+/joinA
+
+Join Team B:
+/joinB
+
+Start:
+/startmatch`
+
+  );
+
+});
+
+// ======================================
+// JOIN A
+// ======================================
+
+bot.onText(/\/joinA/, (msg) => {
+
+  const roomCode =
+    String(msg.chat.id);
+
+  const room =
+    rooms[roomCode];
+
+  if (!room) {
+
+    bot.sendMessage(
+      msg.chat.id,
+      "❌ Room not found"
+    );
+
+    return;
+
+  }
+
+  room.teamA.push({
+
+    id: msg.from.id,
+    name: msg.from.first_name
+
+  });
+
+  bot.sendMessage(
+
+    msg.chat.id,
+
+`✅ ${msg.from.first_name} joined Team A`
+
+  );
+
+});
+
+// ======================================
+// JOIN B
+// ======================================
+
+bot.onText(/\/joinB/, (msg) => {
+
+  const roomCode =
+    String(msg.chat.id);
+
+  const room =
+    rooms[roomCode];
+
+  if (!room) {
+
+    bot.sendMessage(
+      msg.chat.id,
+      "❌ Room not found"
+    );
+
+    return;
+
+  }
+
+  room.teamB.push({
+
+    id: msg.from.id,
+    name: msg.from.first_name
+
+  });
+
+  bot.sendMessage(
+
+    msg.chat.id,
+
+`✅ ${msg.from.first_name} joined Team B`
+
+  );
+
+});
+
+// ======================================
+// START TEAM MATCH
+// ======================================
+
+bot.onText(/\/startmatch/, (msg) => {
+
+  const roomCode =
+    String(msg.chat.id);
+
+  const room =
+    rooms[roomCode];
+
+  if (!room) return;
+
+  bot.sendMessage(
+
+    msg.chat.id,
+
+`Choose Overs
+
+/overs 1
+/overs 2
+/overs 3
+/overs 5`
+
+  );
+
+});
+
+// ======================================
+// OVERS
+// ======================================
+
+bot.onText(/\/overs (.+)/, (msg, match) => {
+
+  const roomCode =
+    String(msg.chat.id);
+
+  const room =
+    rooms[roomCode];
+
+  if (!room) return;
+
+  const overs =
+    Number(match[1]);
+
+  room.overs = overs;
+
+  room.maxBalls =
+    overs * 6;
+
+  room.tossWinner =
+    Math.random() < 0.5
+      ? "A"
+      : "B";
+
+  bot.sendMessage(
+
+    msg.chat.id,
+
+`🪙 Toss won by Team ${room.tossWinner}
+
+Choose:
+
+/bat
+or
+/bowl`
+
+  );
+
+});
+
+// ======================================
+// BAT
+// ======================================
+
+bot.onText(/\/bat/, (msg) => {
+
+  startTeamGame(
+    msg,
+    true
+  );
+
+});
+
+// ======================================
+// BOWL
+// ======================================
+
+bot.onText(/\/bowl/, (msg) => {
+
+  startTeamGame(
+    msg,
+    false
+  );
+
+});
+
+// ======================================
+// START TEAM GAME
+// ======================================
+
+function startTeamGame(
+  msg,
+  batFirst
+) {
+
+  const roomCode =
+    String(msg.chat.id);
+
+  const room =
+    rooms[roomCode];
+
+  if (!room) return;
+
+  if (batFirst) {
+
+    room.battingTeam =
+      room.tossWinner;
+
+    room.bowlingTeam =
+      room.tossWinner === "A"
+        ? "B"
+        : "A";
+
+  }
+
+  else {
+
+    room.bowlingTeam =
+      room.tossWinner;
+
+    room.battingTeam =
+      room.tossWinner === "A"
+        ? "B"
+        : "A";
+
+  }
+
+  const battingPlayers =
+    room.battingTeam === "A"
+      ? room.teamA
+      : room.teamB;
+
+  const bowlingPlayers =
+    room.bowlingTeam === "A"
+      ? room.teamA
+      : room.teamB;
+
+  const batsman =
+    battingPlayers[0];
+
+  const bowler =
+    bowlingPlayers[0];
+
+  bot.sendMessage(
+
+    msg.chat.id,
+
+`🏏 MATCH STARTED
+
+🎯 Overs:
+${room.overs}
+
+🏏 Batting Team:
+${room.battingTeam}
+
+🥎 Bowling Team:
+${room.bowlingTeam}
+
+🏏 Batter:
+${batsman.name}
+
+🥎 Bowler:
+${bowler.name}`
+
+  );
+
+  sendBowlerDM(
+    bowler,
+    roomCode,
+    msg.chat.id
+  );
+
+}
+
+// ======================================
+// BATTER TYPES NUMBER
+// ======================================
 
 bot.on("message", (msg) => {
 
-  const text = msg.text;
-
-  if (!text) return;
-
-  const number = Number(text);
+  const number =
+    Number(msg.text);
 
   if (
     number < 1 ||
@@ -270,156 +675,283 @@ bot.on("message", (msg) => {
 
   Object.keys(rooms).forEach((roomCode) => {
 
-    const room = rooms[roomCode];
+    const room =
+      rooms[roomCode];
 
     if (!room) return;
+
+    // NORMAL
+
+    if (room.mode === "normal") {
+
+      const batsman =
+        room.players.find(
+          p => p.id === room.batting
+        );
+
+      if (
+        batsman &&
+        msg.from.id === batsman.id
+      ) {
+
+        room.choices[
+          batsman.id
+        ] = number;
+
+      }
+
+    }
+
+    // TEAM
+
+    else {
+
+      const battingPlayers =
+        room.battingTeam === "A"
+          ? room.teamA
+          : room.teamB;
+
+      const batsman =
+        battingPlayers[
+          room.currentBatsman
+        ];
+
+      if (
+        batsman &&
+        msg.from.id === batsman.id
+      ) {
+
+        room.choices[
+          batsman.id
+        ] = number;
+
+      }
+
+    }
+
+  });
+
+});
+
+// ======================================
+// CALLBACK
+// ======================================
+
+bot.on("callback_query", (query) => {
+
+  const data =
+    query.data;
+
+  if (
+    !data.startsWith("bowl_")
+  ) return;
+
+  const parts =
+    data.split("_");
+
+  const roomCode =
+    parts[1];
+
+  const number =
+    Number(parts[2]);
+
+  const room =
+    rooms[roomCode];
+
+  if (!room) return;
+
+  // NORMAL
+
+  if (room.mode === "normal") {
 
     const batsman =
       room.players.find(
         p => p.id === room.batting
       );
 
-    if (!batsman) return;
+    const bowler =
+      room.players.find(
+        p => p.id === room.bowling
+      );
 
-    if (msg.from.id !== batsman.id) return;
+    room.choices[
+      bowler.id
+    ] = number;
 
-    room.choices[batsman.id] = number;
+    if (
+      room.choices[
+        batsman.id
+      ] === undefined
+    ) {
 
-  });
+      bot.answerCallbackQuery(
+        query.id,
+        {
+          text:
+            "Waiting for batsman"
+        }
+      );
 
-});
+      return;
 
-// =========================
-// CALLBACKS
-// =========================
+    }
 
-bot.on("callback_query", async (query) => {
-
-  const data = query.data;
-
-  if (!data.startsWith("bowl_")) return;
-
-  const parts = data.split("_");
-
-  const roomCode = parts[1];
-
-  const number = Number(parts[2]);
-
-  const room = rooms[roomCode];
-
-  if (!room) return;
-
-  const batsman =
-    room.players.find(
-      p => p.id === room.batting
+    playNormalBall(
+      room,
+      roomCode,
+      query.message.chat.id,
+      batsman,
+      bowler
     );
-
-  const bowler =
-    room.players.find(
-      p => p.id === room.bowling
-    );
-
-  room.choices[bowler.id] = number;
-
-  // WAIT FOR BATSMAN
-
-  if (
-    room.choices[batsman.id] === undefined
-  ) {
-
-    bot.answerCallbackQuery(query.id, {
-
-      text: "Waiting for batsman"
-
-    });
-
-    return;
 
   }
 
-  const batsmanChoice =
-    room.choices[batsman.id];
+  // TEAM
 
-  const bowlerChoice =
-    room.choices[bowler.id];
+  else {
+
+    const battingPlayers =
+      room.battingTeam === "A"
+        ? room.teamA
+        : room.teamB;
+
+    const bowlingPlayers =
+      room.bowlingTeam === "A"
+        ? room.teamA
+        : room.teamB;
+
+    const batsman =
+      battingPlayers[
+        room.currentBatsman
+      ];
+
+    const bowler =
+      bowlingPlayers[
+        room.currentBowler
+      ];
+
+    room.choices[
+      bowler.id
+    ] = number;
+
+    if (
+      room.choices[
+        batsman.id
+      ] === undefined
+    ) {
+
+      bot.answerCallbackQuery(
+        query.id,
+        {
+          text:
+            "Waiting for batsman"
+        }
+      );
+
+      return;
+
+    }
+
+    playTeamBall(
+      room,
+      roomCode,
+      query.message.chat.id,
+      batsman,
+      bowler
+    );
+
+  }
+
+});
+
+// ======================================
+// NORMAL BALL
+// ======================================
+
+function playNormalBall(
+  room,
+  roomCode,
+  chatId,
+  batsman,
+  bowler
+) {
+
+  const bat =
+    room.choices[
+      batsman.id
+    ];
+
+  const bowl =
+    room.choices[
+      bowler.id
+    ];
 
   room.balls++;
 
   let message =
 `🏏 Ball ${room.balls}
 
-🏏 ${batsman.name}: ${batsmanChoice}
-🥎 ${bowler.name}: ${bowlerChoice}
+🏏 ${batsman.name}: ${bat}
+🥎 ${bowler.name}: ${bowl}
 
 `;
 
-  // =========================
   // OUT
-  // =========================
 
-  if (batsmanChoice === bowlerChoice) {
+  if (bat === bowl) {
 
-    room.wickets++;
+    bot.sendVideo(
+      chatId,
+      "out.mp4"
+    );
 
-    message +=
-      `❌ ${batsman.name} OUT!\n`;
+    if (
+      room.innings === 1
+    ) {
 
-    // FIRST INNINGS END
-
-    if (room.innings === 1) {
-
-      room.target = room.score + 1;
+      room.target =
+        room.score + 1;
 
       room.innings = 2;
 
       room.score = 0;
 
-      room.wickets = 0;
-
       room.balls = 0;
 
-      // SWAP PLAYERS
+      const temp =
+        room.batting;
 
-      const temp = room.batting;
+      room.batting =
+        room.bowling;
 
-      room.batting = room.bowling;
-
-      room.bowling = temp;
+      room.bowling =
+        temp;
 
       message +=
-`\n🎯 Target: ${room.target}
+`\n❌ OUT
 
-🏏 Second Innings Begins`;
+🎯 Target:
+${room.target}
+
+🏏 Second Innings`;
 
     }
-
-    // MATCH END
 
     else {
 
-      let winner;
-
-      if (room.score >= room.target) {
-
-        winner = batsman.name;
-
-      }
-
-      else {
-
-        winner = bowler.name;
-
-      }
-
       message +=
-        `\n\n🏆 ${winner} Wins`;
+`\n❌ OUT
+
+🏆 ${bowler.name} Wins`;
 
       bot.sendMessage(
-        query.message.chat.id,
+        chatId,
         message
       );
 
-      delete rooms[roomCode];
+      delete rooms[
+        roomCode
+      ];
 
       return;
 
@@ -427,62 +959,50 @@ bot.on("callback_query", async (query) => {
 
   }
 
-  // =========================
   // RUNS
-  // =========================
 
   else {
 
-    room.score += batsmanChoice;
+    room.score += bat;
+
+    sendRunVideo(
+      chatId,
+      bat
+    );
 
     message +=
-      `🏏 +${batsmanChoice} Runs\n`;
+      `🏏 +${bat} Runs`;
 
   }
 
-  // =========================
-  // TARGET INFO
-  // =========================
+  // CHASE COMPLETE
 
-  if (room.innings === 2) {
-
-    const runsNeeded =
-      room.target - room.score;
+  if (
+    room.innings === 2 &&
+    room.score >= room.target
+  ) {
 
     message +=
-      `\n🎯 Target: ${room.target}`;
+`\n🏆 ${batsman.name} Wins`;
 
-    message +=
-      `\nNeed ${runsNeeded} runs`;
+    bot.sendMessage(
+      chatId,
+      message
+    );
 
-    // WIN
+    delete rooms[
+      roomCode
+    ];
 
-    if (room.score >= room.target) {
-
-      message +=
-        `\n\n🏆 ${batsman.name} Wins`;
-
-      bot.sendMessage(
-        query.message.chat.id,
-        message
-      );
-
-      delete rooms[roomCode];
-
-      return;
-
-    }
+    return;
 
   }
 
   message +=
-    `\nScore: ${room.score}/${room.wickets}`;
-
-  // RESET CHOICES
+`\n\nScore:
+${room.score}`;
 
   room.choices = {};
-
-  // UPDATED PLAYERS
 
   const newBatsman =
     room.players.find(
@@ -494,65 +1014,272 @@ bot.on("callback_query", async (query) => {
       p => p.id === room.bowling
     );
 
-  // GROUP MESSAGE
-
-  bot.sendMessage(
-
-    query.message.chat.id,
-
-`${message}
-
-🏏 Batter:
-${newBatsman.name}
-
-🥎 Bowler:
-${newBowler.name}
-
-🏏 ${newBatsman.name} send number in group`
-
+  bot.sendVideo(
+    chatId,
+    "wait.mp4"
   );
 
-  // SEND NEW BOWLER DM
+  bot.sendMessage(
+    chatId,
+    message
+  );
+
+  sendBowlerDM(
+    newBowler,
+    roomCode,
+    chatId
+  );
+
+}
+
+// ======================================
+// TEAM BALL
+// ======================================
+
+function playTeamBall(
+  room,
+  roomCode,
+  chatId,
+  batsman,
+  bowler
+) {
+
+  const bat =
+    room.choices[
+      batsman.id
+    ];
+
+  const bowl =
+    room.choices[
+      bowler.id
+    ];
+
+  room.balls++;
+
+  let message =
+`🏏 Ball ${room.balls}/${room.maxBalls}
+
+🏏 ${batsman.name}: ${bat}
+🥎 ${bowler.name}: ${bowl}
+
+`;
+
+  // OUT
+
+  if (bat === bowl) {
+
+    bot.sendVideo(
+      chatId,
+      "out.mp4"
+    );
+
+    room.wickets++;
+
+    room.currentBatsman++;
+
+    message +=
+      `❌ OUT`;
+
+  }
+
+  // RUNS
+
+  else {
+
+    room.score += bat;
+
+    sendRunVideo(
+      chatId,
+      bat
+    );
+
+    message +=
+      `🏏 +${bat} Runs`;
+
+  }
+
+  message +=
+`\n\nScore:
+${room.score}/${room.wickets}`;
+
+  // TARGET
+
+  if (
+    room.innings === 2
+  ) {
+
+    const need =
+      room.target -
+      room.score;
+
+    const ballsLeft =
+      room.maxBalls -
+      room.balls;
+
+    message +=
+`\n🎯 Target:
+${room.target}
+
+Need ${need} in ${ballsLeft} balls`;
+
+  }
+
+  room.choices = {};
+
+  bot.sendVideo(
+    chatId,
+    "wait.mp4"
+  );
 
   bot.sendMessage(
+    chatId,
+    message
+  );
 
-    newBowler.id,
+  const battingPlayers =
+    room.battingTeam === "A"
+      ? room.teamA
+      : room.teamB;
 
-    "🥎 Choose Bowling Number",
+  const bowlingPlayers =
+    room.bowlingTeam === "A"
+      ? room.teamA
+      : room.teamB;
 
-    getBowlingButtons(roomCode)
+  const newBatsman =
+    battingPlayers[
+      room.currentBatsman
+    ];
 
-  ).catch(() => {
+  const newBowler =
+    bowlingPlayers[
+      room.currentBowler
+    ];
+
+  // INNINGS END
+
+  if (
+    !newBatsman ||
+    room.balls >= room.maxBalls
+  ) {
+
+    if (
+      room.innings === 1
+    ) {
+
+      room.target =
+        room.score + 1;
+
+      room.innings = 2;
+
+      room.score = 0;
+      room.wickets = 0;
+      room.balls = 0;
+
+      room.currentBatsman = 0;
+
+      const temp =
+        room.battingTeam;
+
+      room.battingTeam =
+        room.bowlingTeam;
+
+      room.bowlingTeam =
+        temp;
+
+      bot.sendMessage(
+
+        chatId,
+
+`🎯 Target:
+${room.target}
+
+🏏 Second Innings Begins`
+
+      );
+
+      return;
+
+    }
+
+    else {
+
+      bot.sendVideo(
+        chatId,
+        "https://media.tenor.com/2roX3uxz_68AAAPo/trophy-win.mp4"
+      );
+
+      bot.sendMessage(
+
+        chatId,
+
+`🏆 Team ${room.bowlingTeam} Wins`
+
+      );
+
+      delete rooms[
+        roomCode
+      ];
+
+      return;
+
+    }
+
+  }
+
+  // CHASE COMPLETE
+
+  if (
+    room.innings === 2 &&
+    room.score >= room.target
+  ) {
+
+    bot.sendVideo(
+      chatId,
+      "https://media.tenor.com/2roX3uxz_68AAAPo/trophy-win.mp4"
+    );
 
     bot.sendMessage(
 
-      query.message.chat.id,
+      chatId,
 
-`⚠️ ${newBowler.name} must start bot in DM first
-
-https://t.me/strangerfrndmusicbot`
+`🏆 Team ${room.battingTeam} Wins`
 
     );
 
-  });
+    delete rooms[
+      roomCode
+    ];
 
-});
+    return;
 
-// =========================
+  }
+
+  sendBowlerDM(
+    newBowler,
+    roomCode,
+    chatId
+  );
+
+}
+
+// ======================================
 // WEBHOOK
-// =========================
+// ======================================
 
 app.post(`/bot${token}`, (req, res) => {
 
-  bot.processUpdate(req.body);
+  bot.processUpdate(
+    req.body
+  );
 
   res.sendStatus(200);
 
 });
 
-// =========================
+// ======================================
 // HOME
-// =========================
+// ======================================
 
 app.get("/", (req, res) => {
 
@@ -560,9 +1287,9 @@ app.get("/", (req, res) => {
 
 });
 
-// =========================
+// ======================================
 // SERVER
-// =========================
+// ======================================
 
 const PORT =
   process.env.PORT || 3000;
