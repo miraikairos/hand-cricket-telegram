@@ -456,10 +456,10 @@ let message =
 
   message += `❌ ${batsman.name} OUT!\n`;
 
-  // OUT GIF
-  bot.sendAnimation(
+  // OUT VIDEO
+  bot.sendVideo(
     query.message.chat.id,
-    "https://media.giphy.com/media/l3vR85PnGsBwu1PFK/giphy.gif"
+    "https://media.tenor.com/y6DH8V2R2S8AAAPo/wicket-cricket.mp4"
   );
 
   room.currentBatsman++;
@@ -473,9 +473,9 @@ let message =
   // 1 RUN
   if (batsmanChoice === 1) {
 
-    bot.sendAnimation(
+    bot.sendVideo(
       query.message.chat.id,
-      "https://media.giphy.com/media/xT1XGzAnABSXy8DPCU/giphy.gif"
+      "https://media.tenor.com/8jSK8QWzMwcAAAPo/single-run-cricket.mp4"
     );
 
   }
@@ -483,9 +483,9 @@ let message =
   // 2 RUNS
   else if (batsmanChoice === 2) {
 
-    bot.sendAnimation(
+    bot.sendVideo(
       query.message.chat.id,
-      "https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif"
+      "https://media.tenor.com/7v0xP0s6M4QAAAPo/cricket-running.mp4"
     );
 
   }
@@ -493,9 +493,9 @@ let message =
   // 3 RUNS
   else if (batsmanChoice === 3) {
 
-    bot.sendAnimation(
+    bot.sendVideo(
       query.message.chat.id,
-      "https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif"
+      "https://media.tenor.com/1K9jK9g8rS0AAAPo/cricket-run.mp4"
     );
 
   }
@@ -503,9 +503,9 @@ let message =
   // FOUR
   else if (batsmanChoice === 4) {
 
-    bot.sendAnimation(
+    bot.sendVideo(
       query.message.chat.id,
-      "https://media.giphy.com/media/26BRuo6sLetdllPAQ/giphy.gif"
+      "https://media.tenor.com/y6z7W8LQ9JkAAAPo/cricket-four.mp4"
     );
 
   }
@@ -513,9 +513,9 @@ let message =
   // FIVE
   else if (batsmanChoice === 5) {
 
-    bot.sendAnimation(
+    bot.sendVideo(
       query.message.chat.id,
-      "https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif"
+      "https://media.tenor.com/hz6ZK6qW8VgAAAPo/cricket-cheer.mp4"
     );
 
   }
@@ -523,9 +523,9 @@ let message =
   // SIX
   else if (batsmanChoice === 6) {
 
-    bot.sendAnimation(
+    bot.sendVideo(
       query.message.chat.id,
-      "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif"
+      "https://media.tenor.com/J-7D1Xft6a8AAAPo/cricket-six.mp4"
     );
 
   }
@@ -583,9 +583,9 @@ let message =
 
         message +=
           `\n\n🏆 Team ${winner} Wins`;
-bot.sendAnimation(
+bot.sendVideo(
   query.message.chat.id,
-  "https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif"
+  "https://media.tenor.com/2roX3uxz_68AAAPo/trophy-win.mp4"
 );
         bot.sendMessage(
           query.message.chat.id,
