@@ -16,7 +16,55 @@ function createRoomCode() {
     .substring(2, 6)
     .toUpperCase();
 }
+function getBowlingButtons(roomCode) {
 
+  return {
+
+    reply_markup: {
+
+      inline_keyboard: [
+
+        [
+          {
+            text: "1",
+            callback_data: `bowl_${roomCode}_1`
+          },
+
+          {
+            text: "2",
+            callback_data: `bowl_${roomCode}_2`
+          },
+
+          {
+            text: "3",
+            callback_data: `bowl_${roomCode}_3`
+          }
+        ],
+
+        [
+          {
+            text: "4",
+            callback_data: `bowl_${roomCode}_4`
+          },
+
+          {
+            text: "5",
+            callback_data: `bowl_${roomCode}_5`
+          },
+
+          {
+            text: "6",
+            callback_data: `bowl_${roomCode}_6`
+          }
+        ]
+
+      ]
+
+    }
+
+  };
+
+}
 function getNumberButtons(roomCode) {
   return {
     reply_markup: {
@@ -722,11 +770,23 @@ if (room.mode === "normal") {
   message +=
     `\nScore: ${room.score}/${room.wickets}`;
 
-  bot.sendMessage(
-    query.message.chat.id,
-    message,
-    getNumberButtons(roomCode)
-  );
+bot.sendVideo(
+  query.message.chat.id,
+  "videos/wait.mp4"
+);
+
+bot.sendMessage(
+  query.message.chat.id,
+
+  `${message}
+
+🏏 Now Batter: ${batsman.name}
+🥎 Bowler: ${bowler.name}
+
+🎮 Send Number (1-6)`,
+
+  getNumberButtons(roomCode)
+);
 
   room.choices = {};
 
@@ -981,12 +1041,23 @@ bot.sendVideo(
         return;
       }
 
-      bot.sendMessage(
-        query.message.chat.id,
-        message,
-        getNumberButtons(roomCode)
-      );
+  bot.sendVideo(
+  query.message.chat.id,
+  "videos/wait.mp4"
+);
 
+bot.sendMessage(
+  query.message.chat.id,
+
+  `${message}
+
+🏏 Now Batter: ${batsman.name}
+🥎 Bowler: ${bowler.name}
+
+🎮 Send Number (1-6)`,
+
+  getNumberButtons(roomCode)
+);
     }
 
     room.choices = {};
