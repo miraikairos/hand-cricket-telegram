@@ -549,12 +549,13 @@ ${battingPlayers[0].name}
 ${bowlingPlayers[0].name}`
   );
 
-  bot.sendMessage(
-    msg.chat.id,
-    "Choose your number",
-    getNumberButtons(roomCode)
-  );
+ bot.sendMessage(
+  chat,
+  `${tossWinner.name} bats first
 
+🏏 Batter sends number in group
+🥎 Bowler receives buttons in DM`
+);
 });
 // GAMEPLAY
 function startTeamGame(room, chatId) {
@@ -588,21 +589,59 @@ ${bowlingPlayers[0].name}`
  
 
 }
+bot.on("message", (msg) => {
+
+  const text = msg.text;
+
+  if (!text) return;
+
+  const number = Number(text);
+
+  if (
+    number < 1 ||
+    number > 6
+  ) return;
+
+  Object.keys(rooms).forEach((roomCode) => {
+
+    const room = rooms[roomCode];
+
+    if (!room) return;
+
+    if (room.mode !== "normal") return;
+
+    const batsman =
+      room.players.find(
+        p => p.id === room.batting
+      );
+
+    if (!batsman) return;
+
+    if (msg.from.id !== batsman.id) return;
+
+    room.choices[msg.from.id] = number;
+
+  });
+
+});
 bot.on("callback_query", (query) => {
 
   const data = query.data;
   const userId = query.from.id;
-
-  if (!data.startsWith("play_")) return;
+if (
+  !data.startsWith("play_") &&
+  !data.startsWith("bowl_")
+) return;
 
   const parts = data.split("_");
-
+ const action = parts[0];
   const roomCode = parts[1];
   const number = Number(parts[2]);
 
   const room = rooms[roomCode];
 
   if (!room) return;
+ 
 // NORMAL MODE
 // NORMAL MODE
 if (room.mode === "normal") {
@@ -629,7 +668,11 @@ if (room.mode === "normal") {
     return;
   }
 
+  if (action === "bowl") {
+
   room.choices[userId] = number;
+
+}
 
   if (Object.keys(room.choices).length < 2) {
 
@@ -782,11 +825,30 @@ bot.sendMessage(
 
 🏏 Now Batter: ${batsman.name}
 🥎 Bowler: ${bowler.name}
+🏏 ${batsman.name} send your batting number in group chat
+🎮 Send Number (1-6)`
 
-🎮 Send Number (1-6)`,
-
-  getNumberButtons(roomCode)
+  
 );
+bot.sendMessage(
+  bowler.id,
+  "🥎 Choose Bowling Number",
+  getBowlingButtons(roomCode)
+).catch(() => {
+
+  bot.sendMessage(
+    query.message.chat.id,
+
+    `⚠️ ${bowler.name} must start the bot in DM first.
+
+Open:
+https://t.me/strangerfrndmusicbot
+
+Then press:
+/start`
+  );
+
+});
 
   room.choices = {};
 
@@ -1053,11 +1115,29 @@ bot.sendMessage(
 
 🏏 Now Batter: ${batsman.name}
 🥎 Bowler: ${bowler.name}
-
+🏏 ${batsman.name} send your batting number in group chat
 🎮 Send Number (1-6)`,
 
-  getNumberButtons(roomCode)
 );
+bot.sendMessage(
+  bowler.id,
+  "🥎 Choose Bowling Number",
+  getBowlingButtons(roomCode)
+).catch(() => {
+
+  bot.sendMessage(
+    query.message.chat.id,
+
+    `⚠️ ${bowler.name} must start the bot in DM first.
+
+Open:
+https://t.me/strangerfrndmusicbot
+
+Then press:
+/start`
+  );
+
+});
     }
 
     room.choices = {};
