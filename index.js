@@ -556,6 +556,7 @@ bot.on("callback_query", (query) => {
 
   if (!room) return;
 // NORMAL MODE
+// NORMAL MODE
 if (room.mode === "normal") {
 
   const batsman =
@@ -600,13 +601,14 @@ if (room.mode === "normal") {
   room.balls++;
 
   let message =
-    `🏏 Ball ${room.balls}
+`🏏 Ball ${room.balls}
 
 🏏 ${batsman.name}: ${batsmanChoice}
 🥎 ${bowler.name}: ${bowlerChoice}
 
 `;
 
+  // OUT
   if (batsmanChoice === bowlerChoice) {
 
     room.wickets++;
@@ -619,12 +621,101 @@ if (room.mode === "normal") {
       "videos/out.mp4"
     );
 
-  } else {
+    // FIRST INNINGS END
+    if (room.innings === 1) {
+
+      room.target = room.score + 1;
+
+      room.innings = 2;
+
+      room.score = 0;
+      room.wickets = 0;
+      room.balls = 0;
+
+      // SWAP PLAYERS
+      const temp = room.batting;
+
+      room.batting = room.bowling;
+
+      room.bowling = temp;
+
+      message +=
+        `\n🎯 Target: ${room.target}`;
+
+      message +=
+        `\n\n🏏 Second Innings Begins`;
+
+    }
+
+    // SECOND INNINGS END
+    else {
+
+      let winner;
+
+      if (room.score >= room.target) {
+
+        winner = batsman.name;
+
+      } else {
+
+        winner = bowler.name;
+
+      }
+
+      message +=
+        `\n\n🏆 ${winner} Wins`;
+
+      bot.sendMessage(
+        query.message.chat.id,
+        message
+      );
+
+      delete rooms[roomCode];
+
+      return;
+
+    }
+
+  }
+
+  // RUNS
+  else {
 
     room.score += batsmanChoice;
 
     message +=
       `🏏 +${batsmanChoice} Runs\n`;
+
+  }
+
+  // TARGET INFO
+  if (room.innings === 2) {
+
+    const runsNeeded =
+      room.target - room.score;
+
+    message +=
+      `\n🎯 Target: ${room.target}`;
+
+    message +=
+      `\nNeed ${runsNeeded} runs`;
+
+    // CHASE COMPLETE
+    if (room.score >= room.target) {
+
+      message +=
+        `\n\n🏆 ${batsman.name} Wins`;
+
+      bot.sendMessage(
+        query.message.chat.id,
+        message
+      );
+
+      delete rooms[roomCode];
+
+      return;
+
+    }
 
   }
 
@@ -640,6 +731,7 @@ if (room.mode === "normal") {
   room.choices = {};
 
   return;
+
 }
   // TEAM MODE
   if (room.mode === "team") {
