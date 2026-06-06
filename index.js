@@ -459,7 +459,7 @@ let message =
   // OUT VIDEO
   bot.sendVideo(
     query.message.chat.id,
-    "https://media.tenor.com/y6DH8V2R2S8AAAPo/wicket-cricket.mp4"
+    "out.mp4"
   );
 
   room.currentBatsman++;
@@ -475,7 +475,7 @@ let message =
 
     bot.sendVideo(
       query.message.chat.id,
-      "https://media.tenor.com/8jSK8QWzMwcAAAPo/single-run-cricket.mp4"
+      "1-run.mp4"
     );
 
   }
@@ -485,7 +485,7 @@ let message =
 
     bot.sendVideo(
       query.message.chat.id,
-      "https://media.tenor.com/7v0xP0s6M4QAAAPo/cricket-running.mp4"
+      "2-run.mp4"
     );
 
   }
@@ -495,7 +495,7 @@ let message =
 
     bot.sendVideo(
       query.message.chat.id,
-      "https://media.tenor.com/1K9jK9g8rS0AAAPo/cricket-run.mp4"
+      "3-run.mp4"
     );
 
   }
@@ -505,7 +505,7 @@ let message =
 
     bot.sendVideo(
       query.message.chat.id,
-      "https://media.tenor.com/y6z7W8LQ9JkAAAPo/cricket-four.mp4"
+      "4-run.mp4"
     );
 
   }
@@ -515,7 +515,7 @@ let message =
 
     bot.sendVideo(
       query.message.chat.id,
-      "https://media.tenor.com/hz6ZK6qW8VgAAAPo/cricket-cheer.mp4"
+      "5-run.png"
     );
 
   }
