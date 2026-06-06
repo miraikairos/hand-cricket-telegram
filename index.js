@@ -1,5 +1,4 @@
 const TelegramBot = require("node-telegram-bot-api");
-
 const token = process.env.BOT_TOKEN;
 
 const bot = new TelegramBot(token, {
@@ -453,19 +452,85 @@ let message =
 
     if (batsmanChoice === bowlerChoice) {
 
-      room.wickets++;
+  room.wickets++;
 
-      message += `❌ ${batsman.name} OUT!\n`;
+  message += `❌ ${batsman.name} OUT!\n`;
 
-      room.currentBatsman++;
+  // OUT GIF
+  bot.sendAnimation(
+    query.message.chat.id,
+    "https://media.giphy.com/media/l3vR85PnGsBwu1PFK/giphy.gif"
+  );
 
-    } else {
+  room.currentBatsman++;
 
-      room.score += batsmanChoice;
+} else {
 
-      message += `🏏 +${batsmanChoice} Runs\n`;
+  room.score += batsmanChoice;
 
-    }
+  message += `🏏 +${batsmanChoice} Runs\n`;
+
+  // 1 RUN
+  if (batsmanChoice === 1) {
+
+    bot.sendAnimation(
+      query.message.chat.id,
+      "https://media.giphy.com/media/xT1XGzAnABSXy8DPCU/giphy.gif"
+    );
+
+  }
+
+  // 2 RUNS
+  else if (batsmanChoice === 2) {
+
+    bot.sendAnimation(
+      query.message.chat.id,
+      "https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif"
+    );
+
+  }
+
+  // 3 RUNS
+  else if (batsmanChoice === 3) {
+
+    bot.sendAnimation(
+      query.message.chat.id,
+      "https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif"
+    );
+
+  }
+
+  // FOUR
+  else if (batsmanChoice === 4) {
+
+    bot.sendAnimation(
+      query.message.chat.id,
+      "https://media.giphy.com/media/26BRuo6sLetdllPAQ/giphy.gif"
+    );
+
+  }
+
+  // FIVE
+  else if (batsmanChoice === 5) {
+
+    bot.sendAnimation(
+      query.message.chat.id,
+      "https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif"
+    );
+
+  }
+
+  // SIX
+  else if (batsmanChoice === 6) {
+
+    bot.sendAnimation(
+      query.message.chat.id,
+      "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif"
+    );
+
+  }
+
+}
 
     message +=
       `\nScore: ${room.score}/${room.wickets}`;
@@ -518,7 +583,10 @@ let message =
 
         message +=
           `\n\n🏆 Team ${winner} Wins`;
-
+bot.sendAnimation(
+  query.message.chat.id,
+  "https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif"
+);
         bot.sendMessage(
           query.message.chat.id,
           message
