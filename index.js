@@ -555,7 +555,92 @@ bot.on("callback_query", (query) => {
   const room = rooms[roomCode];
 
   if (!room) return;
+// NORMAL MODE
+if (room.mode === "normal") {
 
+  const batsman =
+    room.players.find(
+      p => p.id === room.batting
+    );
+
+  const bowler =
+    room.players.find(
+      p => p.id === room.bowling
+    );
+
+  if (
+    userId !== batsman.id &&
+    userId !== bowler.id
+  ) {
+
+    bot.answerCallbackQuery(query.id, {
+      text: "Not your turn",
+    });
+
+    return;
+  }
+
+  room.choices[userId] = number;
+
+  if (Object.keys(room.choices).length < 2) {
+
+    bot.answerCallbackQuery(query.id, {
+      text: "Waiting for opponent...",
+    });
+
+    return;
+  }
+
+  const batsmanChoice =
+    room.choices[batsman.id];
+
+  const bowlerChoice =
+    room.choices[bowler.id];
+
+  room.balls++;
+
+  let message =
+    `🏏 Ball ${room.balls}
+
+🏏 ${batsman.name}: ${batsmanChoice}
+🥎 ${bowler.name}: ${bowlerChoice}
+
+`;
+
+  if (batsmanChoice === bowlerChoice) {
+
+    room.wickets++;
+
+    message +=
+      `❌ ${batsman.name} OUT!\n`;
+
+    bot.sendVideo(
+      query.message.chat.id,
+      "videos/out.mp4"
+    );
+
+  } else {
+
+    room.score += batsmanChoice;
+
+    message +=
+      `🏏 +${batsmanChoice} Runs\n`;
+
+  }
+
+  message +=
+    `\nScore: ${room.score}/${room.wickets}`;
+
+  bot.sendMessage(
+    query.message.chat.id,
+    message,
+    getNumberButtons(roomCode)
+  );
+
+  room.choices = {};
+
+  return;
+}
   // TEAM MODE
   if (room.mode === "team") {
 
