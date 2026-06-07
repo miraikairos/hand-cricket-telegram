@@ -106,27 +106,27 @@ function getBowlingButtons(roomCode) {
 async function sendRunVideo(chatId, runs) {
 
   if (runs === 1) {
-    bot.sendVideo(chatId, "BAACAgUAAxkBAAICOGolQEHMxQABoYl0knG9P3OsCY4WZQACuBwAAqMQKFWi_HmdeTT9YTsE");
+    bot.sendVideo(chatId, "BAACAgUAAxkBAAICOGolQEHMxQABoYl0knG9P3OsCY4WZQACuBwAAqMQKFWi_HmdeTT9YTsE").catch(console.log);
   }
 
   else if (runs === 2) {
-    bot.sendVideo(chatId, "BAACAgUAAxkBAAICOWolQEzBc1xSsHt0fs3jBgV_J3DvAAK5HAACoxAoVe66Mz3tf8HWOwQ");
+    bot.sendVideo(chatId, "BAACAgUAAxkBAAICOWolQEzBc1xSsHt0fs3jBgV_J3DvAAK5HAACoxAoVe66Mz3tf8HWOwQ").catch(console.log);
   }
 
   else if (runs === 3) {
-   bot.sendVideo(chatId, "3-run.mp4");
+   bot.sendVideo(chatId, "3-run.mp4").catch(console.log);
   }
 
   else if (runs === 4) {
-   bot.sendVideo(chatId, "BAACAgUAAxkBAAICO2olQGAg0TlEAvGXHXk-8cJJMlLuAAK7HAACoxAoVRTu3CZ7XEtpOwQ");
+   bot.sendVideo(chatId, "BAACAgUAAxkBAAICO2olQGAg0TlEAvGXHXk-8cJJMlLuAAK7HAACoxAoVRTu3CZ7XEtpOwQ").catch(console.log);
   }
 
   else if (runs === 5) {
-    bot.sendPhoto(chatId, "BAACAgUAAxkBAAICU2olSFazZ_ToXKa6aL_1j3hZXlyNAALJHAACoxAoVcej4vl3ZXulOwQ");
+    bot.sendVideo(chatId, "BAACAgUAAxkBAAICU2olSFazZ_ToXKa6aL_1j3hZXlyNAALJHAACoxAoVcej4vl3ZXulOwQ").catch(console.log);
   }
 
   else if (runs === 6) {
-    bot.sendVideo(chatId, "BAACAgUAAxkBAAICPWolQGxjhjmqXo2422M6me1dKbYHAAK8HAACoxAoVZk76ZRAxyeHOwQ");
+    bot.sendVideo(chatId, "BAACAgUAAxkBAAICPWolQGxjhjmqXo2422M6me1dKbYHAAK8HAACoxAoVZk76ZRAxyeHOwQ").catch(console.log);
   }
 
 }
@@ -1010,12 +1010,12 @@ function playNormalBall(
    bot.sendVideo(
   batsman.id,
   "BAACAgUAAxkDAAICMWolLn51QySaf2e7mv_Bb21wJBCfAAKTHAACoxAoVYfVojQJAAFGUTsE"
-);
+).catch(console.log);
 
 bot.sendVideo(
   bowler.id,
   "BAACAgUAAxkDAAICMWolLn51QySaf2e7mv_Bb21wJBCfAAKTHAACoxAoVYfVojQJAAFGUTsE"
-);
+).catch(console.log);
 
     if (
       room.innings === 1
@@ -1086,19 +1086,15 @@ return;
     room.score += bat;
 
 // send instantly without waiting
-Promise.all([
+sendRunVideo(
+  batsman.id,
+  bat
+);
 
-  sendRunVideo(
-    batsman.id,
-    bat
-  ),
-
-  sendRunVideo(
-    bowler.id,
-    bat
-  )
-
-]);
+sendRunVideo(
+  bowler.id,
+  bat
+);
     message +=
       `🏏 +${bat} Runs`;
 
@@ -1175,13 +1171,13 @@ Send number from 1-6`
 bot.sendVideo(
   batsman.id,
   "BAACAgUAAxkDAAICLmolLnzhrXw_GPlbh5Littz0qkzeAAKRHAACoxAoVYhYGaXqOeMxOwQ"
-);
+).catch(console.log);
 
 // wait video to bowler
 bot.sendVideo(
   bowler.id,
   "BAACAgUAAxkDAAICLmolLnzhrXw_GPlbh5Littz0qkzeAAKRHAACoxAoVYhYGaXqOeMxOwQ"
-);
+).catch(console.log);
 
   sendBowlerDM(
     newBowler,
@@ -1308,7 +1304,7 @@ Need ${need} in ${ballsLeft} balls`;
   await bot.sendVideo(
     chatId,
     "BAACAgUAAxkDAAICLmolLnzhrXw_GPlbh5Littz0qkzeAAKRHAACoxAoVYhYGaXqOeMxOwQ"
-  );
+  ).catch(console.log);
 
   const battingPlayers =
     room.battingTeam === "A"
@@ -1470,7 +1466,7 @@ return;
 await bot.sendVideo(
   room.groupChat,
   "BAACAgUAAxkDAAICLmolLnzhrXw_GPlbh5Littz0qkzeAAKRHAACoxAoVYhYGaXqOeMxOwQ"
-);
+).catch(console.log);
 
 // tell bowler to check DM
 await bot.sendMessage(
