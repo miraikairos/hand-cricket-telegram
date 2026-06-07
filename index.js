@@ -693,13 +693,7 @@ bot.on("message", (msg) => {
         room.choices[
           batsman.id
         ] = number;
-        bot.sendMessage(
-  query.message.chat.id,
-
-`🥎 ${bowler.name} selected bowling number
-
-🏏 ${batsman.name}, send your number now`
-);
+   
 
       }
 
@@ -1052,7 +1046,7 @@ await bot.sendVideo(
 // TEAM BALL
 // ======================================
 
-function playTeamBall(
+async function playTeamBall(
   room,
   roomCode,
   chatId,
@@ -1104,10 +1098,10 @@ function playTeamBall(
 
     room.score += bat;
 
-    sendRunVideo(
-      chatId,
-      bat
-    );
+    await sendRunVideo(
+  chatId,
+  bat
+);
 
     message +=
       `🏏 +${bat} Runs`;
@@ -1142,15 +1136,15 @@ Need ${need} in ${ballsLeft} balls`;
 
   room.choices = {};
 
-  bot.sendVideo(
-    chatId,
-    "wait.mp4"
-  );
+ await bot.sendMessage(
+  chatId,
+  message
+);
 
-  bot.sendMessage(
-    chatId,
-    message
-  );
+await bot.sendVideo(
+  chatId,
+  "wait.mp4"
+);
 
   const battingPlayers =
     room.battingTeam === "A"
