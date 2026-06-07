@@ -1338,7 +1338,7 @@ Need ${need} in ${ballsLeft} balls`;
       room.balls = 0;
 
       room.currentBatsman = 0;
-
+     room.currentBowler = 0;
       const temp =
         room.battingTeam;
 
