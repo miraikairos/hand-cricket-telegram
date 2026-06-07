@@ -293,8 +293,7 @@ ${batsman.name}
 🥎 Bowler:
 ${bowler.name}
 
-🏏 Batter sends number in group
-🥎 Bowler receives buttons in DM`
+📩 Both players check DM`
 
   );
 
@@ -303,6 +302,14 @@ ${bowler.name}
     roomCode,
     msg.chat.id
   );
+  bot.sendMessage(
+
+  batsman.id,
+
+`🏏 Your turn to bat
+
+Send a number from 1-6`
+);
 
 });
 
@@ -730,13 +737,13 @@ if (room.mode === "normal") {
       ] !== undefined
     ) {
 
-      playNormalBall(
-        room,
-        roomCode,
-        msg.chat.id,
-        batsman,
-        bowler
-      );
+    playNormalBall(
+  room,
+  roomCode,
+  room.groupChat || msg.chat.id,
+  batsman,
+  bowler
+);
 
     }
 
