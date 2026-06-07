@@ -1180,7 +1180,7 @@ bot.sendVideo(
     roomCode,
     chatId
   );
-
+room.processing = false;
 }
 
 // ======================================
