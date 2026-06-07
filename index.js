@@ -150,13 +150,13 @@ async function sendRunVideo(chatId, runs){
 // SEND BOWLER DM
 // ======================================
 
-function sendBowlerDM(
+async function sendBowlerDM(
   bowler,
   roomCode,
   groupChat
 ) {
 
-  bot.sendMessage(
+  return bot.sendMessage(
     bowler.id,
     "🥎 Choose Bowling Number",
     getBowlingButtons(roomCode)
@@ -611,7 +611,7 @@ bot.onText(/\/bowl/, (msg) => {
 // START TEAM GAME
 // ======================================
 
-function startTeamGame(
+async function startTeamGame(
   msg,
   batFirst
 ) {
@@ -664,9 +664,9 @@ function startTeamGame(
   const bowler =
     bowlingPlayers[0];
 
-  bot.sendMessage(
+await bot.sendMessage(
 
-    msg.chat.id,
+  msg.chat.id,
 
 `🏏 MATCH STARTED
 
@@ -685,13 +685,13 @@ ${batsman.name}
 🥎 Bowler:
 ${bowler.name}`
 
-  );
+);
 
-  sendBowlerDM(
-    bowler,
-    roomCode,
-    msg.chat.id
-  );
+await sendBowlerDM(
+  bowler,
+  roomCode,
+  msg.chat.id
+);
 
 }
 
@@ -761,13 +761,7 @@ bot.on("message", (msg) => {
         room.choices[
           batsman.id
         ] = number;
-       bot.sendMessage(
-  query.message.chat.id,
-
-`🥎 ${bowler.name} selected bowling number
-
-🏏 ${batsman.name}, send your number now`
-);
+   
       }
 
     }
