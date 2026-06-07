@@ -756,11 +756,7 @@ Check your DM and choose bowling number`
       msg.from.id === batsman.id
     ) {
 
-      if (
-        room.choices[
-          batsman.id
-        ] !== undefined
-      ) return;
+     
 
       room.choices[
         batsman.id
@@ -807,11 +803,7 @@ Check your DM and choose bowling number`
       msg.from.id === batsman.id
     ) {
 
-      if (
-        room.choices[
-          batsman.id
-        ] !== undefined
-      ) return;
+   
 
       room.choices[
         batsman.id
@@ -896,7 +888,21 @@ bot.on("callback_query", (query) => {
     room.choices[
       bowler.id
     ] = number;
+    if (
+  room.choices[
+    batsman.id
+  ] !== undefined
+) {
 
+  playNormalBall(
+    room,
+    roomCode,
+    room.groupChat,
+    batsman,
+    bowler
+  );
+
+}
   bot.answerCallbackQuery(
   query.id,
   {
@@ -974,7 +980,9 @@ function playNormalBall(
   batsman,
   bowler
 ) {
+  if (room.processing) return;
 
+  room.processing = true;
   const bat =
     room.choices[
       batsman.id
