@@ -1007,15 +1007,7 @@ function playNormalBall(
 
   if (bat === bowl) {
 
-   bot.sendVideo(
-  batsman.id,
-  "BAACAgUAAxkDAAICMWolLn51QySaf2e7mv_Bb21wJBCfAAKTHAACoxAoVYfVojQJAAFGUTsE"
-).catch(console.log);
 
-bot.sendVideo(
-  bowler.id,
-  "BAACAgUAAxkDAAICMWolLn51QySaf2e7mv_Bb21wJBCfAAKTHAACoxAoVYfVojQJAAFGUTsE"
-).catch(console.log);
 
     if (
       room.innings === 1
@@ -1301,10 +1293,7 @@ Need ${need} in ${ballsLeft} balls`;
   // WAIT VIDEO
   // ======================================
 
-  await bot.sendVideo(
-    chatId,
-    "BAACAgUAAxkDAAICLmolLnzhrXw_GPlbh5Littz0qkzeAAKRHAACoxAoVYhYGaXqOeMxOwQ"
-  ).catch(console.log);
+
 
   const battingPlayers =
     room.battingTeam === "A"
