@@ -882,13 +882,13 @@ bot.on("callback_query", (query) => {
 
     }
 
-    playNormalBall(
-      room,
-      roomCode,
-      query.message.chat.id,
-      batsman,
-      bowler
-    );
+ playNormalBall(
+  room,
+  roomCode,
+  room.groupChat,
+  batsman,
+  bowler
+);
 
   }
 
