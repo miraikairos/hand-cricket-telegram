@@ -627,7 +627,7 @@ async function startTeamGame(
 
   await bot.sendMessage(
 
-    msg.chat.id,
+  room.groupChat,
 
 `🏏 MATCH STARTED
 
@@ -646,7 +646,16 @@ ${batsman.name}
 🥎 Bowler:
 ${bowler.name}`
 
-  );
+);
+
+await bot.sendMessage(
+
+  room.groupChat,
+
+`🥎 ${bowler.name}
+
+Check your DM and choose bowling number`
+);
 
   await sendBowlerDM(
     bowler,
@@ -735,9 +744,36 @@ bot.on("message", (msg) => {
           ] !== undefined
         ) return;
 
-        room.choices[
-          batsman.id
-        ] = number;
+       room.choices[
+  batsman.id
+] = number;
+
+const bowlingPlayers =
+  room.bowlingTeam === "A"
+    ? room.teamA
+    : room.teamB;
+
+const bowler =
+  bowlingPlayers[
+    room.currentBowler
+  ];
+
+// if bowler already selected
+if (
+  room.choices[
+    bowler.id
+  ] !== undefined
+) {
+
+  playTeamBall(
+    room,
+    roomCode,
+    room.groupChat,
+    batsman,
+    bowler
+  );
+
+}
 
       }
 
@@ -854,15 +890,18 @@ bot.on("callback_query", (query) => {
 
     // ask batter after bowler selects
 
-    bot.sendMessage(
+  bot.sendVideo(
+  room.groupChat,
+  "wait.mp4"
+);
 
-      room.groupChat,
+bot.sendMessage(
+  room.groupChat,
 
 `🥎 ${bowler.name} selected bowling number
 
 🏏 ${batsman.name} send your number now`
-
-    );
+);
 
     if (
       room.choices[
@@ -1249,7 +1288,14 @@ ${room.target}
         room.bowlingTeam === "A"
           ? room.teamA
           : room.teamB;
+     await bot.sendMessage(
 
+  room.groupChat,
+
+`🥎 ${secondBowling[0].name}
+
+Check your DM and choose bowling number`
+);
       await sendBowlerDM(
         secondBowling[0],
         roomCode,
@@ -1319,11 +1365,32 @@ ${room.target}
   // NEXT BALL
   // ======================================
 
-  await sendBowlerDM(
-    newBowler,
-    roomCode,
-    room.groupChat
-  );
+ // ======================================
+// NEXT BALL
+// ======================================
+
+// wait video before next ball
+await bot.sendVideo(
+  room.groupChat,
+  "wait.mp4"
+);
+
+// tell bowler to check DM
+await bot.sendMessage(
+
+  room.groupChat,
+
+`🥎 ${newBowler.name}
+
+Check your DM and choose bowling number`
+);
+
+// send DM buttons
+await sendBowlerDM(
+  newBowler,
+  roomCode,
+  room.groupChat
+);
 
 }
 
