@@ -1476,7 +1476,17 @@ await sendBowlerDM(
 );
 
 }
+bot.on("message", (msg) => {
 
+  if (msg.video) {
+
+    console.log(
+      msg.video.file_id
+    );
+
+  }
+
+});
 // ======================================
 // WEBHOOK
 // ======================================
@@ -1513,16 +1523,5 @@ app.listen(PORT, () => {
   console.log(
     `Server running on ${PORT}`
   );
-
-});
-bot.on("message", (msg) => {
-
-  if (msg.video) {
-
-    console.log(
-      msg.video.file_id
-    );
-
-  }
 
 });
