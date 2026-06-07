@@ -1003,10 +1003,15 @@ function playNormalBall(
 
   if (bat === bowl) {
 
-    bot.sendVideo(
-      chatId,
-      "out.mp4"
-    );
+   bot.sendVideo(
+  batsman.id,
+  "out.mp4"
+);
+
+bot.sendVideo(
+  bowler.id,
+  "out.mp4"
+);
 
     if (
       room.innings === 1
@@ -1047,10 +1052,17 @@ ${room.target}
 
 🏆 ${bowler.name} Wins`;
 
-      bot.sendMessage(
-        chatId,
-        message
-      );
+      // send score to batter
+bot.sendMessage(
+  batsman.id,
+  message
+);
+
+// send score to bowler
+bot.sendMessage(
+  bowler.id,
+  message
+);
 
       delete rooms[
         roomCode
@@ -1068,11 +1080,15 @@ ${room.target}
 
     room.score += bat;
 
-    sendRunVideo(
-      chatId,
-      bat
-    );
+ sendRunVideo(
+  batsman.id,
+  bat
+);
 
+sendRunVideo(
+  bowler.id,
+  bat
+);
     message +=
       `🏏 +${bat} Runs`;
 
@@ -1088,10 +1104,17 @@ ${room.target}
     message +=
 `\n🏆 ${batsman.name} Wins`;
 
-    bot.sendMessage(
-      chatId,
-      message
-    );
+    // send score to batter
+bot.sendMessage(
+  batsman.id,
+  message
+);
+
+// send score to bowler
+bot.sendMessage(
+  bowler.id,
+  message
+);
 
     delete rooms[
       roomCode
@@ -1117,10 +1140,17 @@ ${room.score}`;
       p => p.id === room.bowling
     );
 
-  bot.sendMessage(
-    chatId,
-    message
-  );
+// send score to batter
+bot.sendMessage(
+  batsman.id,
+  message
+);
+
+// send score to bowler
+bot.sendMessage(
+  bowler.id,
+  message
+);
    bot.sendMessage(
 
   newBatsman.id,
@@ -1129,10 +1159,17 @@ ${room.score}`;
 
 Send number from 1-6`
 );
-  bot.sendVideo(
-    chatId,
-    "wait.mp4"
-  );
+ // wait video to batter
+bot.sendVideo(
+  batsman.id,
+  "wait.mp4"
+);
+
+// wait video to bowler
+bot.sendVideo(
+  bowler.id,
+  "wait.mp4"
+);
 
   sendBowlerDM(
     newBowler,
