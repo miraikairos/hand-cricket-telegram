@@ -871,30 +871,12 @@ bot.on("callback_query", (query) => {
       bowler.id
     ] = number;
 
-    if (
-      room.choices[
-        batsman.id
-      ] === undefined
-    ) {
-
-      bot.answerCallbackQuery(
-        query.id,
-        {
-          text:
-            "Waiting for batsman"
-        }
-      );
-
-      return;
-
-    }
-
- playNormalBall(
-  room,
-  roomCode,
-  room.groupChat,
-  batsman,
-  bowler
+  bot.answerCallbackQuery(
+  query.id,
+  {
+    text:
+      "Bowling number selected"
+  }
 );
 
   }
