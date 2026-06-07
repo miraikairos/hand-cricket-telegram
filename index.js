@@ -106,27 +106,27 @@ function getBowlingButtons(roomCode) {
 async function sendRunVideo(chatId, runs) {
 
   if (runs === 1) {
-    return bot.sendVideo(chatId, "1-run.mp4");
+    bot.sendVideo(chatId, "1-run.mp4");
   }
 
   else if (runs === 2) {
-    return bot.sendVideo(chatId, "2-run.mp4");
+    bot.sendVideo(chatId, "2-run.mp4");
   }
 
   else if (runs === 3) {
-    return bot.sendVideo(chatId, "3-run.mp4");
+   bot.sendVideo(chatId, "3-run.mp4");
   }
 
   else if (runs === 4) {
-    return bot.sendVideo(chatId, "4-run.mp4");
+   bot.sendVideo(chatId, "4-run.mp4");
   }
 
   else if (runs === 5) {
-    return bot.sendPhoto(chatId, "5-run.png");
+    bot.sendPhoto(chatId, "5-run.png");
   }
 
   else if (runs === 6) {
-    return bot.sendVideo(chatId, "6-run.mp4");
+    bot.sendVideo(chatId, "6-run.mp4");
   }
 
 }
@@ -1080,15 +1080,20 @@ bot.sendMessage(
 
     room.score += bat;
 
- sendRunVideo(
-  batsman.id,
-  bat
-);
+// send instantly without waiting
+Promise.all([
 
-sendRunVideo(
-  bowler.id,
-  bat
-);
+  sendRunVideo(
+    batsman.id,
+    bat
+  ),
+
+  sendRunVideo(
+    bowler.id,
+    bat
+  )
+
+]);
     message +=
       `🏏 +${bat} Runs`;
 
