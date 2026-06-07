@@ -194,7 +194,7 @@ bot.onText(/\/create/, (msg) => {
   const roomCode = createRoomCode();
 
   rooms[roomCode] = {
-
+   groupChat: msg.chat.id,
     mode: "normal",
 
     players: [
@@ -737,10 +737,10 @@ if (room.mode === "normal") {
       ] !== undefined
     ) {
 
-    playNormalBall(
+ playNormalBall(
   room,
   roomCode,
-  room.groupChat || msg.chat.id,
+  room.groupChat,
   batsman,
   bowler
 );
@@ -1121,7 +1121,14 @@ ${room.score}`;
     chatId,
     message
   );
+   bot.sendMessage(
 
+  newBatsman.id,
+
+`🏏 Your turn to bat
+
+Send number from 1-6`
+);
   bot.sendVideo(
     chatId,
     "wait.mp4"
