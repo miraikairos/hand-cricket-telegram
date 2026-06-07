@@ -677,7 +677,14 @@ Check your DM and choose bowling number`
 // ======================================
 
 bot.on("message", (msg) => {
+if (msg.video) {
 
+  console.log(
+    "VIDEO ID:",
+    msg.video.file_id
+  );
+
+}
   const number =
     parseInt(msg.text);
 
@@ -1476,17 +1483,7 @@ await sendBowlerDM(
 );
 
 }
-bot.on("message", (msg) => {
 
-  if (msg.video) {
-
-    console.log(
-      msg.video.file_id
-    );
-
-  }
-
-});
 // ======================================
 // WEBHOOK
 // ======================================
