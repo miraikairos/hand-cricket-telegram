@@ -217,8 +217,8 @@ bot.onText(/\/create/, (msg) => {
     wickets: 0,
     balls: 0,
 
-    choices: {}
-
+    choices: {},
+    processing: false
   };
 
   bot.sendMessage(
@@ -1070,12 +1070,13 @@ bot.sendMessage(
   bowler.id,
   message
 );
+delete rooms[
+  roomCode
+];
 
-      delete rooms[
-        roomCode
-      ];
+room.processing = false;
 
-      return;
+return;
 
     }
 
@@ -1128,11 +1129,13 @@ bot.sendMessage(
   message
 );
 
-    delete rooms[
-      roomCode
-    ];
+ delete rooms[
+  roomCode
+];
 
-    return;
+room.processing = false;
+
+return;
 
   }
 
@@ -1196,13 +1199,16 @@ bot.sendVideo(
 // ======================================
 
 async function playTeamBall(
+  
   room,
   roomCode,
   chatId,
   batsman,
   bowler
 ) {
+if (room.processing) return;
 
+room.processing = true;
   const bat =
     room.choices[
       batsman.id
@@ -1227,10 +1233,7 @@ async function playTeamBall(
 
   if (bat === bowl) {
 
-    await bot.sendVideo(
-      chatId,
-      "BAACAgUAAxkDAAICMWolLn51QySaf2e7mv_Bb21wJBCfAAKTHAACoxAoVYfVojQJAAFGUTsE"
-    );
+   
 
     room.wickets++;
 
@@ -1411,11 +1414,13 @@ Check your DM and choose bowling number`
 
       );
 
-      delete rooms[
-        roomCode
-      ];
+     delete rooms[
+  roomCode
+];
 
-      return;
+room.processing = false;
+
+return;
 
     }
 
@@ -1443,11 +1448,13 @@ Check your DM and choose bowling number`
 
     );
 
-    delete rooms[
-      roomCode
-    ];
+   delete rooms[
+  roomCode
+];
 
-    return;
+room.processing = false;
+
+return;
 
   }
 
@@ -1481,7 +1488,7 @@ await sendBowlerDM(
   roomCode,
   room.groupChat
 );
-
+room.processing = false;
 }
 
 // ======================================
