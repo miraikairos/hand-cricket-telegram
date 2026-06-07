@@ -16,7 +16,29 @@
 ✅ Render Ready
 
 */
+process.on(
+  "unhandledRejection",
+  err => {
 
+    console.log(
+      "UNHANDLED:",
+      err
+    );
+
+  }
+);
+
+process.on(
+  "uncaughtException",
+  err => {
+
+    console.log(
+      "CRASH:",
+      err
+    );
+
+  }
+);
 const TelegramBot = require("node-telegram-bot-api");
 const express = require("express");
 
@@ -945,10 +967,7 @@ bot.on("callback_query", (query) => {
 
     // ask batter after bowler selects
 
-  bot.sendVideo(
-  room.groupChat,
-  "BAACAgUAAxkDAAICLmolLnzhrXw_GPlbh5Littz0qkzeAAKRHAACoxAoVYhYGaXqOeMxOwQ"
-);
+
 
 bot.sendMessage(
   room.groupChat,
@@ -1452,10 +1471,7 @@ return;
 // ======================================
 
 // wait video before next ball
-await bot.sendVideo(
-  room.groupChat,
-  "BAACAgUAAxkDAAICLmolLnzhrXw_GPlbh5Littz0qkzeAAKRHAACoxAoVYhYGaXqOeMxOwQ"
-).catch(console.log);
+
 
 // tell bowler to check DM
 await bot.sendMessage(
@@ -1468,11 +1484,15 @@ Check your DM and choose bowling number`
 );
 
 // send DM buttons
-await sendBowlerDM(
-  newBowler,
-  roomCode,
-  room.groupChat
-);
+setTimeout(() => {
+
+  sendBowlerDM(
+    newBowler,
+    roomCode,
+    room.groupChat
+  );
+
+}, 1500);
 room.processing = false;
 }
 
@@ -1499,7 +1519,31 @@ app.get("/", (req, res) => {
   res.send("Bot Running");
 
 });
+setInterval(() => {
 
+  Object.keys(rooms).forEach(code => {
+
+    const room = rooms[code];
+
+    if (!room) return;
+
+    if (
+      Date.now() - (room.lastActive || 0)
+      > 1000 * 60 * 30
+    ) {
+
+      delete rooms[code];
+
+      console.log(
+        "Deleted inactive room:",
+        code
+      );
+
+    }
+
+  });
+
+}, 600000);
 // ======================================
 // SERVER
 // ======================================
