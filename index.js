@@ -926,32 +926,13 @@ bot.sendMessage(
 🏏 ${batsman.name} send your number now`
 );
 
-    if (
-      room.choices[
-        batsman.id
-      ] === undefined
-    ) {
-
-      bot.answerCallbackQuery(
-        query.id,
-        {
-          text:
-            "Waiting for batsman"
-        }
-      );
-
-      return;
-
-    }
-
-    playTeamBall(
-      room,
-      roomCode,
-      room.groupChat,
-      batsman,
-      bowler
-    );
-
+   bot.answerCallbackQuery(
+  query.id,
+  {
+    text:
+      "Bowling number selected"
+  }
+);
   }
 
 });
