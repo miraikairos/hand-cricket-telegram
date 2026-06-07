@@ -676,15 +676,19 @@ Check your DM and choose bowling number`
 // BATTER SENDS NUMBER
 // ======================================
 
-bot.on("message", (msg) => {
-if (msg.video) {
 
-  console.log(
-    "VIDEO ID:",
-    msg.video.file_id
-  );
 
-}
+  bot.on("message", (msg) => {
+
+  if (msg.video) {
+
+    console.log(
+      "VIDEO ID:",
+      msg.video.file_id
+    );
+
+  }
+
   const number =
     parseInt(msg.text);
 
@@ -694,133 +698,156 @@ if (msg.video) {
     number > 6
   ) return;
 
-  Object.keys(rooms).forEach((roomCode) => {
+  const roomCode =
+    Object.keys(rooms).find(code => {
 
-    const room =
-      rooms[roomCode];
+      const room =
+        rooms[code];
 
-    if (!room) return;
+      if (!room) return false;
 
-    // ======================================
-    // NORMAL
-    // ======================================
+      // NORMAL
+      if (room.mode === "normal") {
 
-   // ======================================
-// NORMAL
-// ======================================
+        return room.players.some(
+          p => p.id === msg.from.id
+        );
 
-if (room.mode === "normal") {
+      }
 
-  const batsman =
-    room.players.find(
-      p => p.id === room.batting
-    );
+      // TEAM
+      return (
 
-  const bowler =
-    room.players.find(
-      p => p.id === room.bowling
-    );
+        room.teamA.some(
+          p => p.id === msg.from.id
+        ) ||
 
-  // batter sends in group
-  if (
-    batsman &&
-    msg.from.id === batsman.id
-  ) {
+        room.teamB.some(
+          p => p.id === msg.from.id
+        )
+
+      );
+
+    });
+
+  if (!roomCode) return;
+
+  const room =
+    rooms[roomCode];
+
+  // ======================================
+  // NORMAL
+  // ======================================
+
+  if (room.mode === "normal") {
+
+    const batsman =
+      room.players.find(
+        p => p.id === room.batting
+      );
+
+    const bowler =
+      room.players.find(
+        p => p.id === room.bowling
+      );
 
     if (
-      room.choices[
-        batsman.id
-      ] !== undefined
-    ) return;
-
-    room.choices[
-      batsman.id
-    ] = number;
-
-    // if bowler already selected
-    if (
-      room.choices[
-        bowler.id
-      ] !== undefined
+      batsman &&
+      msg.from.id === batsman.id
     ) {
 
- playNormalBall(
-  room,
-  roomCode,
-  room.groupChat,
-  batsman,
-  bowler
-);
+      if (
+        room.choices[
+          batsman.id
+        ] !== undefined
+      ) return;
 
-    }
-
-  }
-
-}
-
-    // ======================================
-    // TEAM
-    // ======================================
-
-    else {
-
-      const battingPlayers =
-        room.battingTeam === "A"
-          ? room.teamA
-          : room.teamB;
-
-      const batsman =
-        battingPlayers[
-          room.currentBatsman
-        ];
+      room.choices[
+        batsman.id
+      ] = number;
 
       if (
-        batsman &&
-        msg.from.id === batsman.id
+        room.choices[
+          bowler.id
+        ] !== undefined
       ) {
 
-        if (
-          room.choices[
-            batsman.id
-          ] !== undefined
-        ) return;
-
-       room.choices[
-  batsman.id
-] = number;
-
-const bowlingPlayers =
-  room.bowlingTeam === "A"
-    ? room.teamA
-    : room.teamB;
-
-const bowler =
-  bowlingPlayers[
-    room.currentBowler
-  ];
-
-// if bowler already selected
-if (
-  room.choices[
-    bowler.id
-  ] !== undefined
-) {
-
-  playTeamBall(
-    room,
-    roomCode,
-    room.groupChat,
-    batsman,
-    bowler
-  );
-
-}
+        playNormalBall(
+          room,
+          roomCode,
+          room.groupChat,
+          batsman,
+          bowler
+        );
 
       }
 
     }
 
-  });
+  }
+
+  // ======================================
+  // TEAM
+  // ======================================
+
+  else {
+
+    const battingPlayers =
+      room.battingTeam === "A"
+        ? room.teamA
+        : room.teamB;
+
+    const batsman =
+      battingPlayers[
+        room.currentBatsman
+      ];
+
+    if (
+      batsman &&
+      msg.from.id === batsman.id
+    ) {
+
+      if (
+        room.choices[
+          batsman.id
+        ] !== undefined
+      ) return;
+
+      room.choices[
+        batsman.id
+      ] = number;
+
+      const bowlingPlayers =
+        room.bowlingTeam === "A"
+          ? room.teamA
+          : room.teamB;
+
+      const bowler =
+        bowlingPlayers[
+          room.currentBowler
+        ];
+
+      if (
+        room.choices[
+          bowler.id
+        ] !== undefined
+      ) {
+
+        playTeamBall(
+          room,
+          roomCode,
+          room.groupChat,
+          batsman,
+          bowler
+        );
+
+      }
+
+    }
+
+  }
+
+});
 
 });
 
