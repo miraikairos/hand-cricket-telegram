@@ -691,31 +691,58 @@ bot.on("message", (msg) => {
     // NORMAL
     // ======================================
 
-    if (room.mode === "normal") {
+   // ======================================
+// NORMAL
+// ======================================
 
-      const batsman =
-        room.players.find(
-          p => p.id === room.batting
-        );
+if (room.mode === "normal") {
 
-      if (
-        batsman &&
-        msg.from.id === batsman.id
-      ) {
+  const batsman =
+    room.players.find(
+      p => p.id === room.batting
+    );
 
-        if (
-          room.choices[
-            batsman.id
-          ] !== undefined
-        ) return;
+  const bowler =
+    room.players.find(
+      p => p.id === room.bowling
+    );
 
-        room.choices[
-          batsman.id
-        ] = number;
+  // batter sends in group
+  if (
+    batsman &&
+    msg.from.id === batsman.id
+  ) {
 
-      }
+    if (
+      room.choices[
+        batsman.id
+      ] !== undefined
+    ) return;
+
+    room.choices[
+      batsman.id
+    ] = number;
+
+    // if bowler already selected
+    if (
+      room.choices[
+        bowler.id
+      ] !== undefined
+    ) {
+
+      playNormalBall(
+        room,
+        roomCode,
+        msg.chat.id,
+        batsman,
+        bowler
+      );
 
     }
+
+  }
+
+}
 
     // ======================================
     // TEAM
