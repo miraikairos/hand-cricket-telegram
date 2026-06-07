@@ -348,8 +348,8 @@ bot.onText(/\/teamcreate/, (msg) => {
 
     target: 0,
 
-    choices: {}
-
+    choices: {},
+    processing: false
   };
 
   bot.sendMessage(
@@ -1352,11 +1352,14 @@ ${room.target}
 
 Check your DM and choose bowling number`
 );
-      await sendBowlerDM(
-        secondBowling[0],
-        roomCode,
-        room.groupChat
-      );
+     await sendBowlerDM(
+  secondBowling[0],
+  roomCode,
+  room.groupChat
+);
+
+room.processing = false;
+
 
       return;
 
