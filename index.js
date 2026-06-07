@@ -1515,3 +1515,14 @@ app.listen(PORT, () => {
   );
 
 });
+bot.on("message", (msg) => {
+
+  if (msg.video) {
+
+    console.log(
+      msg.video.file_id
+    );
+
+  }
+
+});
