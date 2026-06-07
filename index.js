@@ -395,36 +395,56 @@ Start:
 
 bot.onText(/\/joinA/, (msg) => {
 
-  const roomCode =
-    String(msg.chat.id);
+  const roomCode = String(msg.chat.id);
 
-  const room =
-    rooms[roomCode];
+  const room = rooms[roomCode];
 
   if (!room) {
-
     bot.sendMessage(
       msg.chat.id,
       "❌ Room not found"
     );
+    return;
+  }
+
+  // already in Team A
+  if (
+    room.teamA.find(
+      p => p.id === msg.from.id
+    )
+  ) {
+
+    bot.sendMessage(
+      msg.chat.id,
+      "⚠️ Already joined Team A"
+    );
 
     return;
+  }
 
+  // already in Team B
+  if (
+    room.teamB.find(
+      p => p.id === msg.from.id
+    )
+  ) {
+
+    bot.sendMessage(
+      msg.chat.id,
+      "❌ You already joined Team B"
+    );
+
+    return;
   }
 
   room.teamA.push({
-
     id: msg.from.id,
     name: msg.from.first_name
-
   });
 
   bot.sendMessage(
-
     msg.chat.id,
-
-`✅ ${msg.from.first_name} joined Team A`
-
+    `✅ ${msg.from.first_name} joined Team A`
   );
 
 });
@@ -435,36 +455,56 @@ bot.onText(/\/joinA/, (msg) => {
 
 bot.onText(/\/joinB/, (msg) => {
 
-  const roomCode =
-    String(msg.chat.id);
+  const roomCode = String(msg.chat.id);
 
-  const room =
-    rooms[roomCode];
+  const room = rooms[roomCode];
 
   if (!room) {
-
     bot.sendMessage(
       msg.chat.id,
       "❌ Room not found"
     );
+    return;
+  }
+
+  // already in Team B
+  if (
+    room.teamB.find(
+      p => p.id === msg.from.id
+    )
+  ) {
+
+    bot.sendMessage(
+      msg.chat.id,
+      "⚠️ Already joined Team B"
+    );
 
     return;
+  }
 
+  // already in Team A
+  if (
+    room.teamA.find(
+      p => p.id === msg.from.id
+    )
+  ) {
+
+    bot.sendMessage(
+      msg.chat.id,
+      "❌ You already joined Team A"
+    );
+
+    return;
   }
 
   room.teamB.push({
-
     id: msg.from.id,
     name: msg.from.first_name
-
   });
 
   bot.sendMessage(
-
     msg.chat.id,
-
-`✅ ${msg.from.first_name} joined Team B`
-
+    `✅ ${msg.from.first_name} joined Team B`
   );
 
 });
