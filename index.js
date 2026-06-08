@@ -541,7 +541,16 @@ bot.onText(/\/overs (.+)/, (msg, match) => {
     rooms[roomCode];
 
   if (!room) return;
+ if (room.oversLocked) {
 
+  bot.sendMessage(
+    msg.chat.id,
+    "⚠️ Overs already selected"
+  );
+
+  return;
+
+}
   const overs =
     Number(match[1]);
 
@@ -549,12 +558,15 @@ bot.onText(/\/overs (.+)/, (msg, match) => {
 
   room.maxBalls =
     overs * 6;
-
+  room.oversLocked = true;
   room.tossWinner =
     Math.random() < 0.5
       ? "A"
       : "B";
-
+ room.tossChooser =
+  room.tossWinner === "A"
+    ? room.teamA[0].id
+    : room.teamB[0].id;
   bot.sendMessage(
 
     msg.chat.id,
@@ -575,7 +587,45 @@ or
 // BAT
 // ======================================
 
+// ======================================
+// BAT
+// ======================================
+
 bot.onText(/\/bat/, (msg) => {
+
+  const roomCode =
+    String(msg.chat.id);
+
+  const room =
+    rooms[roomCode];
+
+  if (!room) return;
+
+  if (
+    msg.from.id !== room.tossChooser
+  ) {
+
+    bot.sendMessage(
+      msg.chat.id,
+      "❌ Only toss winner can choose"
+    );
+
+    return;
+
+  }
+
+  if (room.choiceDone) {
+
+    bot.sendMessage(
+      msg.chat.id,
+      "⚠️ Bat/Bowl already selected"
+    );
+
+    return;
+
+  }
+
+  room.choiceDone = true;
 
   startTeamGame(
     msg,
@@ -589,6 +639,40 @@ bot.onText(/\/bat/, (msg) => {
 // ======================================
 
 bot.onText(/\/bowl/, (msg) => {
+
+  const roomCode =
+    String(msg.chat.id);
+
+  const room =
+    rooms[roomCode];
+
+  if (!room) return;
+
+  if (
+    msg.from.id !== room.tossChooser
+  ) {
+
+    bot.sendMessage(
+      msg.chat.id,
+      "❌ Only toss winner can choose"
+    );
+
+    return;
+
+  }
+
+  if (room.choiceDone) {
+
+    bot.sendMessage(
+      msg.chat.id,
+      "⚠️ Bat/Bowl already selected"
+    );
+
+    return;
+
+  }
+
+  room.choiceDone = true;
 
   startTeamGame(
     msg,
