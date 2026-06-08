@@ -1482,7 +1482,7 @@ await bot.sendMessage(
 
 Check your DM and choose bowling number`
 );
-
+room.processing = false;
 // send DM buttons
 setTimeout(() => {
 
@@ -1493,7 +1493,7 @@ setTimeout(() => {
   );
 
 }, 1500);
-room.processing = false;
+
 }
 
 // ======================================
