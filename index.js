@@ -914,7 +914,11 @@ Check your DM and choose bowling number`
       room.choices[
         batsman.id
       ] = number;
-
+     console.log(
+  "BATTER NUMBER:",
+  batsman.name,
+  number
+);
       const bowlingPlayers =
         room.bowlingTeam === "A"
           ? room.teamA
@@ -1048,9 +1052,27 @@ bot.on("callback_query", (query) => {
     room.choices[
       bowler.id
     ] = number;
-
+  console.log(
+  "BOWLER NUMBER:",
+  bowler.name,
+  number
+);
     // ask batter after bowler selects
+if (
+  room.choices[
+    batsman.id
+  ] !== undefined
+) {
 
+  playTeamBall(
+    room,
+    roomCode,
+    room.groupChat,
+    batsman,
+    bowler
+  );
+
+}
 
 
 bot.sendMessage(
