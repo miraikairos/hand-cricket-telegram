@@ -903,7 +903,16 @@ Check your DM and choose bowling number`
       battingPlayers[
         room.currentBatsman
       ];
+     console.log(
+  "CURRENT BATSMAN:",
+  batsman?.name,
+  room.currentBatsman
+);
 
+console.log(
+  "MSG FROM:",
+  msg.from.first_name
+);
     if (
       batsman &&
       msg.from.id === batsman.id
