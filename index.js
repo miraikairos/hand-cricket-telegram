@@ -1187,7 +1187,10 @@ bot.sendMessage(
 delete rooms[
   roomCode
 ];
-
+console.log(
+  "PLAYTEAMBALL END",
+  roomCode
+);
 room.processing = false;
 
 return;
@@ -1242,7 +1245,10 @@ bot.sendMessage(
  delete rooms[
   roomCode
 ];
-
+console.log(
+  "PLAYTEAMBALL END",
+  roomCode
+);
 room.processing = false;
 
 return;
@@ -1301,6 +1307,10 @@ bot.sendVideo(
     roomCode,
     chatId
   );
+  console.log(
+  "PLAYTEAMBALL END",
+  roomCode
+);
 room.processing = false;
 }
 
@@ -1316,9 +1326,15 @@ async function playTeamBall(
   batsman,
   bowler
 ) {
+  console.log(
+  "PLAYTEAMBALL START",
+  roomCode,
+  room.processing
+);
 if (room.processing) return;
 
 room.processing = true;
+room.lastActive = Date.now();
   const bat =
     room.choices[
       batsman.id
@@ -1501,7 +1517,10 @@ Check your DM and choose bowling number`
   roomCode,
   room.groupChat
 );
-
+console.log(
+  "PLAYTEAMBALL END",
+  roomCode
+);
 room.processing = false;
 
 
@@ -1527,7 +1546,10 @@ room.processing = false;
      delete rooms[
   roomCode
 ];
-
+console.log(
+  "PLAYTEAMBALL END",
+  roomCode
+);
 room.processing = false;
 
 return;
@@ -1561,7 +1583,10 @@ return;
    delete rooms[
   roomCode
 ];
-
+console.log(
+  "PLAYTEAMBALL END",
+  roomCode
+);
 room.processing = false;
 
 return;
@@ -1587,6 +1612,10 @@ await bot.sendMessage(
 `🥎 ${newBowler.name}
 
 Check your DM and choose bowling number`
+);
+console.log(
+  "PLAYTEAMBALL END",
+  roomCode
 );
 room.processing = false;
 // send DM buttons
