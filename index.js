@@ -913,6 +913,9 @@ console.log(
   "MSG FROM:",
   msg.from.first_name
 );
+if (
+  msg.chat.id !== room.groupChat
+) return;
     if (
       batsman &&
       msg.from.id === batsman.id
@@ -1007,6 +1010,12 @@ bot.on("callback_query", (query) => {
     room.choices[
       bowler.id
     ] = number;
+    if (room.choices[bowler.id] !== undefined) {
+  bot.answerCallbackQuery(query.id, {
+    text: "Already selected"
+  });
+  return;
+}
     if (
   room.choices[
     batsman.id
@@ -1061,6 +1070,12 @@ bot.on("callback_query", (query) => {
     room.choices[
       bowler.id
     ] = number;
+    if (room.choices[bowler.id] !== undefined) {
+  bot.answerCallbackQuery(query.id, {
+    text: "Already selected"
+  });
+  return;
+}
   console.log(
   "BOWLER NUMBER:",
   bowler.name,
