@@ -856,7 +856,7 @@ Check your DM and choose bowling number`
       room.players.find(
         p => p.id === room.bowling
       );
-
+  if (msg.chat.id !== room.groupChat) return;
     if (
       batsman &&
       msg.from.id === batsman.id
@@ -916,6 +916,7 @@ console.log(
 if (
   msg.chat.id !== room.groupChat
 ) return;
+
     if (
       batsman &&
       msg.from.id === batsman.id
@@ -940,6 +941,7 @@ if (
         bowlingPlayers[
           room.currentBowler
         ];
+    
 
       if (
         room.choices[
@@ -1010,12 +1012,7 @@ bot.on("callback_query", (query) => {
     room.choices[
       bowler.id
     ] = number;
-    if (room.choices[bowler.id] !== undefined) {
-  bot.answerCallbackQuery(query.id, {
-    text: "Already selected"
-  });
-  return;
-}
+
     if (
   room.choices[
     batsman.id
@@ -1066,16 +1063,22 @@ bot.on("callback_query", (query) => {
       bowlingPlayers[
         room.currentBowler
       ];
+    if (query.from.id !== bowler.id) {
 
+  bot.answerCallbackQuery(
+    query.id,
+    {
+      text: "❌ Not your turn to bowl"
+    }
+  );
+
+  return;
+
+}
     room.choices[
       bowler.id
     ] = number;
-    if (room.choices[bowler.id] !== undefined) {
-  bot.answerCallbackQuery(query.id, {
-    text: "Already selected"
-  });
-  return;
-}
+   
   console.log(
   "BOWLER NUMBER:",
   bowler.name,
