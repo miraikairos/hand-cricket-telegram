@@ -204,7 +204,11 @@ async function sendBowlerDM(
 // ======================================
 
 bot.onText(/\/start/, (msg) => {
-
+     console.log(
+    "START USER:",
+    msg.from.first_name,
+    msg.from.id
+  );
   bot.sendMessage(
 
     msg.chat.id,
