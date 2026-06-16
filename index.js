@@ -1886,27 +1886,7 @@ Need ${need} in ${ballsLeft} balls`;
   // clear old choices
 
   room.choices = {};
-// Change bowler after every over
-if (room.balls % 6 === 0) {
 
-  room.currentBowler++;
-
-  if (
-    room.currentBowler >=
-    bowlingPlayers.length
-  ) {
-
-    room.currentBowler = 0;
-
-  }
-
-  message +=
-`\n\n🔄 New Bowler:
-${bowlingPlayers[
-  room.currentBowler
-].name}`;
-
-}
   // ======================================
   // SEND SCORE
   // ======================================
@@ -1941,6 +1921,21 @@ ${bowlingPlayers[
     bowlingPlayers[
       room.currentBowler
     ];
+    // Change bowler after every over
+if (room.balls % 6 === 0) {
+
+  room.currentBowler++;
+
+  if (
+    room.currentBowler >=
+    bowlingPlayers.length
+  ) {
+
+    room.currentBowler = 0;
+
+  }
+
+}
 
   // ======================================
   // INNINGS END
