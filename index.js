@@ -384,7 +384,7 @@ bot.onText(/\/teamcreate/, (msg) => {
   rooms[roomCode] = {
 
     groupChat: msg.chat.id,
-
+    owner: msg.from.id,
     mode: "team",
 
     teamA: [],
@@ -599,6 +599,111 @@ bot.onText(/\/resenddm/, (msg) => {
 
 });
 
+//////////batting////////////
+
+bot.onText(/\/batting (\d+)/, (msg, match) => {
+
+  const room =
+    rooms[String(msg.chat.id)];
+
+  if (
+    !room ||
+    room.mode !== "team"
+  ) {
+    return;
+  }
+
+  if (
+    msg.from.id !== room.owner
+  ) {
+
+    return bot.sendMessage(
+      msg.chat.id,
+      "❌ Only match creator can change batting order."
+    );
+
+  }
+
+  const battingPlayers =
+    room.battingTeam === "A"
+      ? room.teamA
+      : room.teamB;
+
+  const pos =
+    parseInt(match[1]) - 1;
+
+  if (
+    pos < 0 ||
+    pos >= battingPlayers.length
+  ) {
+
+    return bot.sendMessage(
+      msg.chat.id,
+      "❌ Invalid player number."
+    );
+
+  }
+
+  room.currentBatsman = pos;
+
+  bot.sendMessage(
+    msg.chat.id,
+    `🏏 Batter changed to ${battingPlayers[pos].name}`
+  );
+
+});
+/////////////////////////
+bot.onText(/\/bowling (\d+)/, (msg, match) => {
+
+  const room =
+    rooms[String(msg.chat.id)];
+
+  if (
+    !room ||
+    room.mode !== "team"
+  ) {
+    return;
+  }
+
+  if (
+    msg.from.id !== room.owner
+  ) {
+
+    return bot.sendMessage(
+      msg.chat.id,
+      "❌ Only match creator can change bowling order."
+    );
+
+  }
+
+  const bowlingPlayers =
+    room.bowlingTeam === "A"
+      ? room.teamA
+      : room.teamB;
+
+  const pos =
+    parseInt(match[1]) - 1;
+
+  if (
+    pos < 0 ||
+    pos >= bowlingPlayers.length
+  ) {
+
+    return bot.sendMessage(
+      msg.chat.id,
+      "❌ Invalid player number."
+    );
+
+  }
+
+  room.currentBowler = pos;
+
+  bot.sendMessage(
+    msg.chat.id,
+    `🥎 Bowler changed to ${bowlingPlayers[pos].name}`
+  );
+
+});
 // ======================================
 // OVERS
 // ======================================
@@ -1108,7 +1213,7 @@ bot.onText(/\/status/, (msg) => {
 
 ${battingPlayers
   .map((p, i) =>
-    `${i === room.currentBatsman ? "➡️" : "•"} ${p.name}`
+    `${i + 1}. ${i === room.currentBatsman ? "➡️" : ""} ${p.name}`
   )
   .join("\n")}
 
@@ -1116,7 +1221,7 @@ ${battingPlayers
 
 ${bowlingPlayers
   .map((p, i) =>
-    `${i === room.currentBowler ? "➡️" : "•"} ${p.name}`
+    `${i + 1}. ${i === room.currentBowler ? "➡️" : ""} ${p.name}`
   )
   .join("\n")}
 
