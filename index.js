@@ -958,6 +958,7 @@ Check your DM and choose bowling number`
     }
 
   }
+  
 
   // ======================================
   // TEAM
@@ -1052,7 +1053,91 @@ if (
 
 });
 
+// ======================================
+// STATUS
+// ======================================
 
+bot.onText(/\/status/, (msg) => {
+
+  const roomCode =
+    String(msg.chat.id);
+
+  const room =
+    rooms[roomCode];
+
+  if (
+    !room ||
+    room.mode !== "team"
+  ) {
+
+    return bot.sendMessage(
+      msg.chat.id,
+      "❌ No active team match."
+    );
+
+  }
+
+  const battingPlayers =
+    room.battingTeam === "A"
+      ? room.teamA
+      : room.teamB;
+
+  const bowlingPlayers =
+    room.bowlingTeam === "A"
+      ? room.teamA
+      : room.teamB;
+
+  const batsman =
+    battingPlayers[
+      room.currentBatsman
+    ];
+
+  const bowler =
+    bowlingPlayers[
+      room.currentBowler
+    ];
+
+  const text =
+
+`📊 TEAM MATCH STATUS
+
+🏏 Innings: ${room.innings}
+🎯 Score: ${room.score}/${room.wickets}
+
+🏏 Batting Team (${room.battingTeam})
+
+${battingPlayers
+  .map((p, i) =>
+    `${i === room.currentBatsman ? "➡️" : "•"} ${p.name}`
+  )
+  .join("\n")}
+
+🥎 Bowling Team (${room.bowlingTeam})
+
+${bowlingPlayers
+  .map((p, i) =>
+    `${i === room.currentBowler ? "➡️" : "•"} ${p.name}`
+  )
+  .join("\n")}
+
+🏏 Current Batter:
+${batsman?.name || "None"}
+
+🥎 Current Bowler:
+${bowler?.name || "None"}
+
+🏏 Balls:
+${room.balls || 0}
+
+🎯 Target:
+${room.target || "Not set"}`;
+
+  bot.sendMessage(
+    msg.chat.id,
+    text
+  );
+
+});
 // ======================================
 // CALLBACK
 // ======================================
