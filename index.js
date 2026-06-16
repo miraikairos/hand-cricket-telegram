@@ -209,7 +209,7 @@ try {
 
       bot.sendMessage(
         groupChat,
-        `⚠️ ${bowler.name} must start bot in DM first`
+        `⚠️ ${bowler.name} must start bot in DM first and then type /resenddm in group chat`
       );
 
     }
@@ -561,6 +561,40 @@ bot.onText(/\/startmatch/, (msg) => {
 /overs 3
 /overs 5`
 
+  );
+
+});
+// ======================================
+// RESEND DM
+// ======================================
+
+bot.onText(/\/resenddm/, (msg) => {
+
+  const roomCode = String(msg.chat.id);
+
+  const room = rooms[roomCode];
+
+  if (!room || room.mode !== "team") return;
+
+  const bowlingPlayers =
+    room.bowlingTeam === "A"
+      ? room.teamA
+      : room.teamB;
+
+  const bowler =
+    bowlingPlayers[
+      room.currentBowler
+    ];
+
+  sendBowlerDM(
+    bowler,
+    roomCode,
+    room.groupChat
+  );
+
+  bot.sendMessage(
+    msg.chat.id,
+    "📩 Bowling DM resent"
   );
 
 });
