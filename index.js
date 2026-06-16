@@ -599,111 +599,6 @@ bot.onText(/\/resenddm/, (msg) => {
 
 });
 
-//////////batting////////////
-
-bot.onText(/\/batting (\d+)/, (msg, match) => {
-
-  const room =
-    rooms[String(msg.chat.id)];
-
-  if (
-    !room ||
-    room.mode !== "team"
-  ) {
-    return;
-  }
-
-  if (
-    msg.from.id !== room.owner
-  ) {
-
-    return bot.sendMessage(
-      msg.chat.id,
-      "❌ Only match creator can change batting order."
-    );
-
-  }
-
-  const battingPlayers =
-    room.battingTeam === "A"
-      ? room.teamA
-      : room.teamB;
-
-  const pos =
-    parseInt(match[1]) - 1;
-
-  if (
-    pos < 0 ||
-    pos >= battingPlayers.length
-  ) {
-
-    return bot.sendMessage(
-      msg.chat.id,
-      "❌ Invalid player number."
-    );
-
-  }
-
-  room.currentBatsman = pos;
-
-  bot.sendMessage(
-    msg.chat.id,
-    `🏏 Batter changed to ${battingPlayers[pos].name}`
-  );
-
-});
-/////////////////////////
-bot.onText(/\/bowling (\d+)/, (msg, match) => {
-
-  const room =
-    rooms[String(msg.chat.id)];
-
-  if (
-    !room ||
-    room.mode !== "team"
-  ) {
-    return;
-  }
-
-  if (
-    msg.from.id !== room.owner
-  ) {
-
-    return bot.sendMessage(
-      msg.chat.id,
-      "❌ Only match creator can change bowling order."
-    );
-
-  }
-
-  const bowlingPlayers =
-    room.bowlingTeam === "A"
-      ? room.teamA
-      : room.teamB;
-
-  const pos =
-    parseInt(match[1]) - 1;
-
-  if (
-    pos < 0 ||
-    pos >= bowlingPlayers.length
-  ) {
-
-    return bot.sendMessage(
-      msg.chat.id,
-      "❌ Invalid player number."
-    );
-
-  }
-
-  room.currentBowler = pos;
-
-  bot.sendMessage(
-    msg.chat.id,
-    `🥎 Bowler changed to ${bowlingPlayers[pos].name}`
-  );
-
-});
 // ======================================
 // OVERS
 // ======================================
@@ -803,10 +698,29 @@ bot.onText(/\/bat/, (msg) => {
 
   room.choiceDone = true;
 
-  startTeamGame(
-    msg,
-    true
-  );
+room.choiceDone = true;
+
+room.battingTeam =
+  room.tossWinner;
+
+room.bowlingTeam =
+  room.tossWinner === "A"
+    ? "B"
+    : "A";
+
+bot.sendMessage(
+  msg.chat.id,
+
+`🏏 Team Setup Phase
+
+Batting Team: ${room.battingTeam}
+Bowling Team: ${room.bowlingTeam}
+
+Use /status
+
+When ready:
+/begin`
+);
 
 });
 
@@ -850,13 +764,34 @@ bot.onText(/\/bowl/, (msg) => {
 
   room.choiceDone = true;
 
-  startTeamGame(
-    msg,
-    false
-  );
+room.choiceDone = true;
+
+room.bowlingTeam =
+  room.tossWinner;
+
+room.battingTeam =
+  room.tossWinner === "A"
+    ? "B"
+    : "A";
+
+bot.sendMessage(
+  msg.chat.id,
+
+`🏏 Team Setup Phase
+
+Batting Team: ${room.battingTeam}
+Bowling Team: ${room.bowlingTeam}
+
+Use /status
+
+When ready:
+/begin`
+);
 
 });
 
+
+room.matchStarted = true;
 // ======================================
 // START TEAM GAME
 // ======================================
@@ -1240,6 +1175,44 @@ ${room.target || "Not set"}`;
   bot.sendMessage(
     msg.chat.id,
     text
+  );
+
+});
+
+//////begin/////////
+
+bot.onText(/\/begin/, (msg) => {
+
+  const room =
+    rooms[String(msg.chat.id)];
+
+  if (!room) return;
+
+  if (
+    room.mode !== "team"
+  ) return;
+
+  if (
+    msg.from.id !== room.owner
+  ) {
+
+    return bot.sendMessage(
+      msg.chat.id,
+      "❌ Only match creator can start match."
+    );
+
+  }
+  if (room.matchStarted) {
+
+  return bot.sendMessage(
+    msg.chat.id,
+    "⚠️ Match already started"
+  );
+
+}
+  startTeamGame(
+    msg,
+    room.battingTeam === room.tossWinner
   );
 
 });
