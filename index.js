@@ -791,7 +791,6 @@ When ready:
 });
 
 
-room.matchStarted = true;
 // ======================================
 // START TEAM GAME
 // ======================================
@@ -1210,6 +1209,7 @@ bot.onText(/\/begin/, (msg) => {
   );
 
 }
+room.matchStarted = true;
   startTeamGame(
     msg,
     room.battingTeam === room.tossWinner
