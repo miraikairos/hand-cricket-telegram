@@ -1122,7 +1122,51 @@ if (
 // ======================================
 // STATUS
 // ======================================
-const text =
+// ======================================
+// STATUS
+// ======================================
+
+bot.onText(/\/status/, (msg) => {
+
+  const roomCode =
+    String(msg.chat.id);
+
+  const room =
+    rooms[roomCode];
+
+  if (
+    !room ||
+    room.mode !== "team"
+  ) {
+
+    return bot.sendMessage(
+      msg.chat.id,
+      "❌ No active team match."
+    );
+
+  }
+
+  const battingPlayers =
+    room.battingTeam === "A"
+      ? room.teamA
+      : room.teamB;
+
+  const bowlingPlayers =
+    room.bowlingTeam === "A"
+      ? room.teamA
+      : room.teamB;
+
+  const batsman =
+    battingPlayers[
+      room.currentBatsman
+    ];
+
+  const bowler =
+    bowlingPlayers[
+      room.currentBowler
+    ];
+
+  const text =
 
 `📊 TEAM MATCH STATUS
 
@@ -1164,10 +1208,15 @@ ${room.balls || 0}/${room.maxBalls || 0}
 ${room.target || "Not set"}
 
 ${!room.matchStarted
-  ? "\n⚠️ Setup Phase Active\nUse /begin when lineup is ready"
-  : "\n✅ Match In Progress"}`
-;
+  ? "⚠️ Setup Phase Active\nUse /begin when lineup is ready"
+  : "✅ Match In Progress"}`;
 
+  bot.sendMessage(
+    msg.chat.id,
+    text
+  );
+
+});
 ///////////batting//////////
 
 bot.onText(
