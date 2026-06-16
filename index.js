@@ -924,14 +924,8 @@ if (
 
    
 
-      room.choices[
-        batsman.id
-      ] = number;
-     console.log(
-  "BATTER NUMBER:",
-  batsman.name,
-  number
-);
+     
+ 
       const bowlingPlayers =
         room.bowlingTeam === "A"
           ? room.teamA
@@ -955,6 +949,15 @@ if (
   return;
 
 }
+ room.choices[
+        batsman.id
+      ] = number;
+      
+          console.log(
+  "BATTER NUMBER:",
+  batsman.name,
+  number
+);
      
       if (
         room.choices[
