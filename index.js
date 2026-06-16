@@ -385,6 +385,7 @@ bot.onText(/\/teamcreate/, (msg) => {
 
     groupChat: msg.chat.id,
     owner: msg.from.id,
+    ownerName: msg.from.first_name,
     mode: "team",
 
     teamA: [],
@@ -718,7 +719,20 @@ Bowling Team: ${room.bowlingTeam}
 
 Use /status
 
+Arrange lineup:
+
+/battingorder POSITION PLAYER
+
+/bowlingorder POSITION PLAYER
+
+Example:
+
+/battingorder 1 3
+
+/bowlingorder 1 2
+
 When ready:
+
 /begin`
 );
 
@@ -784,7 +798,20 @@ Bowling Team: ${room.bowlingTeam}
 
 Use /status
 
+Arrange lineup:
+
+/battingorder POSITION PLAYER
+
+/bowlingorder POSITION PLAYER
+
+Example:
+
+/battingorder 1 3
+
+/bowlingorder 1 2
+
 When ready:
+
 /begin`
 );
 
@@ -1095,53 +1122,18 @@ if (
 // ======================================
 // STATUS
 // ======================================
-
-bot.onText(/\/status/, (msg) => {
-
-  const roomCode =
-    String(msg.chat.id);
-
-  const room =
-    rooms[roomCode];
-
-  if (
-    !room ||
-    room.mode !== "team"
-  ) {
-
-    return bot.sendMessage(
-      msg.chat.id,
-      "❌ No active team match."
-    );
-
-  }
-
-  const battingPlayers =
-    room.battingTeam === "A"
-      ? room.teamA
-      : room.teamB;
-
-  const bowlingPlayers =
-    room.bowlingTeam === "A"
-      ? room.teamA
-      : room.teamB;
-
-  const batsman =
-    battingPlayers[
-      room.currentBatsman
-    ];
-
-  const bowler =
-    bowlingPlayers[
-      room.currentBowler
-    ];
-
-  const text =
+const text =
 
 `📊 TEAM MATCH STATUS
 
-🏏 Innings: ${room.innings}
-🎯 Score: ${room.score}/${room.wickets}
+👑 Match Creator:
+${room.ownerName || "Unknown"}
+
+🏏 Innings:
+${room.innings}
+
+🎯 Score:
+${room.score}/${room.wickets}
 
 🏏 Batting Team (${room.battingTeam})
 
@@ -1166,18 +1158,163 @@ ${batsman?.name || "None"}
 ${bowler?.name || "None"}
 
 🏏 Balls:
-${room.balls || 0}
+${room.balls || 0}/${room.maxBalls || 0}
 
 🎯 Target:
-${room.target || "Not set"}`;
+${room.target || "Not set"}
 
-  bot.sendMessage(
-    msg.chat.id,
-    text
-  );
+${!room.matchStarted
+  ? "\n⚠️ Setup Phase Active\nUse /begin when lineup is ready"
+  : "\n✅ Match In Progress"}`
+;
 
-});
+///////////batting//////////
 
+bot.onText(
+  /\/battingorder (\d+) (\d+)/,
+  (msg, match) => {
+
+    const room =
+      rooms[String(msg.chat.id)];
+
+    if (!room) return;
+
+    if (
+      msg.from.id !== room.owner
+    ) {
+
+      return bot.sendMessage(
+        msg.chat.id,
+        "❌ Only match creator can edit lineup"
+      );
+
+    }
+
+    if (
+      room.lineupLocked
+    ) {
+
+      return bot.sendMessage(
+        msg.chat.id,
+        "❌ Lineup locked"
+      );
+
+    }
+
+    const battingPlayers =
+      room.battingTeam === "A"
+        ? room.teamA
+        : room.teamB;
+
+    const pos =
+      parseInt(match[1]) - 1;
+
+    const player =
+      parseInt(match[2]) - 1;
+
+    if (
+      pos < 0 ||
+      player < 0 ||
+      pos >= battingPlayers.length ||
+      player >= battingPlayers.length
+    ) {
+
+      return bot.sendMessage(
+        msg.chat.id,
+        "❌ Invalid player number"
+      );
+
+    }
+
+    [
+      battingPlayers[pos],
+      battingPlayers[player]
+    ] = [
+      battingPlayers[player],
+      battingPlayers[pos]
+    ];
+
+    bot.sendMessage(
+      msg.chat.id,
+      "✅ Batting order updated"
+    );
+
+  }
+);
+
+///////////bowling/////////
+
+bot.onText(
+  /\/bowlingorder (\d+) (\d+)/,
+  (msg, match) => {
+
+    const room =
+      rooms[String(msg.chat.id)];
+
+    if (!room) return;
+
+    if (
+      msg.from.id !== room.owner
+    ) {
+
+      return bot.sendMessage(
+        msg.chat.id,
+        "❌ Only match creator can edit lineup"
+      );
+
+    }
+
+    if (
+      room.lineupLocked
+    ) {
+
+      return bot.sendMessage(
+        msg.chat.id,
+        "❌ Lineup locked"
+      );
+
+    }
+
+    const bowlingPlayers =
+      room.bowlingTeam === "A"
+        ? room.teamA
+        : room.teamB;
+
+    const pos =
+      parseInt(match[1]) - 1;
+
+    const player =
+      parseInt(match[2]) - 1;
+
+    if (
+      pos < 0 ||
+      player < 0 ||
+      pos >= bowlingPlayers.length ||
+      player >= bowlingPlayers.length
+    ) {
+
+      return bot.sendMessage(
+        msg.chat.id,
+        "❌ Invalid player number"
+      );
+
+    }
+
+    [
+      bowlingPlayers[pos],
+      bowlingPlayers[player]
+    ] = [
+      bowlingPlayers[player],
+      bowlingPlayers[pos]
+    ];
+
+    bot.sendMessage(
+      msg.chat.id,
+      "✅ Bowling order updated"
+    );
+
+  }
+);
 //////begin/////////
 
 bot.onText(/\/begin/, (msg) => {
@@ -1210,6 +1347,7 @@ bot.onText(/\/begin/, (msg) => {
 
 }
 room.matchStarted = true;
+room.lineupLocked = true;
   startTeamGame(
     msg,
     room.battingTeam === room.tossWinner
