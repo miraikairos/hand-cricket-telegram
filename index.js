@@ -927,7 +927,7 @@ Check your DM and choose bowling number`
       room.players.find(
         p => p.id === room.bowling
       );
-  if (msg.chat.id !== room.groupChat) return;
+ 
     if (
       batsman &&
       msg.from.id === batsman.id
