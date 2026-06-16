@@ -722,16 +722,15 @@ Bowling Team: ${room.bowlingTeam}
 Use /status
 
 Arrange lineup:
+/battingorder TEAM POSITION PLAYER
 
-/battingorder POSITION PLAYER
-
-/bowlingorder POSITION PLAYER
+/bowlingorder TEAM POSITION PLAYER
 
 Example:
 
-/battingorder 1 3
+/battingorder A 1 3
 
-/bowlingorder 1 2
+/bowlingorder B 1 2
 
 When ready:
 
@@ -802,15 +801,15 @@ Use /status
 
 Arrange lineup:
 
-/battingorder POSITION PLAYER
+/battingorder TEAM POSITION PLAYER
 
-/bowlingorder POSITION PLAYER
+/bowlingorder TEAM POSITION PLAYER
 
 Example:
 
-/battingorder 1 3
+/battingorder A 1 3
 
-/bowlingorder 1 2
+/bowlingorder B 1 2
 
 When ready:
 
