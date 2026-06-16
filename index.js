@@ -1222,7 +1222,7 @@ ${!room.matchStarted
 ///////////batting//////////
 
 bot.onText(
-  /\/battingorder (\d+) (\d+)/,
+  /\/battingorder ([AB]) (\d+) (\d+)/,
   (msg, match) => {
 
     const room =
@@ -1252,16 +1252,18 @@ bot.onText(
 
     }
 
-    const battingPlayers =
-      room.battingTeam === "A"
-        ? room.teamA
-        : room.teamB;
+   const team =
+  match[1];
 
-    const pos =
-      parseInt(match[1]) - 1;
+const battingPlayers =
+  team === "A"
+    ? room.teamA
+    : room.teamB;
+  const pos =
+  parseInt(match[2]) - 1;
 
-    const player =
-      parseInt(match[2]) - 1;
+const player =
+  parseInt(match[3]) - 1;
 
     if (
       pos < 0 ||
@@ -1296,7 +1298,7 @@ bot.onText(
 ///////////bowling/////////
 
 bot.onText(
-  /\/bowlingorder (\d+) (\d+)/,
+  /\/bowlingorder ([AB]) (\d+) (\d+)/,
   (msg, match) => {
 
     const room =
@@ -1326,16 +1328,15 @@ bot.onText(
 
     }
 
-    const bowlingPlayers =
-      room.bowlingTeam === "A"
-        ? room.teamA
-        : room.teamB;
-
+   const bowlingPlayers =
+  room.bowlingTeam === "A"
+    ? room.teamA
+    : room.teamB;
     const pos =
-      parseInt(match[1]) - 1;
+  parseInt(match[2]) - 1;
 
-    const player =
-      parseInt(match[2]) - 1;
+const player =
+  parseInt(match[3]) - 1;
 
     if (
       pos < 0 ||
