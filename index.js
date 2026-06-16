@@ -1922,7 +1922,8 @@ Need ${need} in ${ballsLeft} balls`;
       room.currentBowler
     ];
     // Change bowler after every over
-if (room.balls % 6 === 0) {
+if (room.balls % 6 === 0 &&
+  bowlingPlayers.length > 1) {
 
   room.currentBowler++;
 
