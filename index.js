@@ -169,33 +169,54 @@ async function sendBowlerDM(
     bowler.id
   );
 
-  try {
+try {
 
-    await bot.sendMessage(
-      bowler.id,
-      "🥎 Choose Bowling Number",
-      getBowlingButtons(roomCode) // keep your original buttons/options here
-    );
+  await bot.sendMessage(
+    bowler.id,
+    "🥎 Choose Bowling Number",
+    getBowlingButtons(roomCode)
+  );
 
-    console.log(
-      "DM SUCCESS:",
-      bowler.name
-    );
+  console.log(
+    "DM SUCCESS:",
+    bowler.name
+  );
 
-  } catch (err) {
+} catch (err) {
 
-    console.log(
-      "DM FAILED:",
-      bowler.name,
-      err.message
-    );
+  console.log(
+    "DM FAILED:",
+    bowler.name,
+    err.message
+  );
 
-    bot.sendMessage(
-      groupChat,
-      `⚠️ ${bowler.name} must start bot in DM first`
-    );
+  setTimeout(async () => {
 
-  }
+    try {
+
+      await bot.sendMessage(
+        bowler.id,
+        "🥎 Choose Bowling Number",
+        getBowlingButtons(roomCode)
+      );
+
+      console.log(
+        "DM RETRY SUCCESS:",
+        bowler.name
+      );
+
+    } catch {
+
+      bot.sendMessage(
+        groupChat,
+        `⚠️ ${bowler.name} must start bot in DM first`
+      );
+
+    }
+
+  }, 3000);
+
+}
 
 }
 
