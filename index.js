@@ -377,7 +377,7 @@ Send a number from 1-6`
 // ======================================
 
 bot.onText(/\/teamcreate/, (msg) => {
-
+console.log("TEAMCREATE CALLED");
   const roomCode =
     String(msg.chat.id);
 
@@ -409,7 +409,9 @@ bot.onText(/\/teamcreate/, (msg) => {
     target: 0,
 
     choices: {},
-    processing: false
+    processing: false,
+    matchStarted: false,
+lineupLocked: false
   };
 
   bot.sendMessage(
