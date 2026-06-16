@@ -163,27 +163,39 @@ async function sendBowlerDM(
   groupChat
 ) {
 
-  return bot.sendMessage(
-    bowler.id,
-    "🥎 Choose Bowling Number",
-    getBowlingButtons(roomCode)
-  )
+  console.log(
+    "TRYING DM:",
+    bowler.name,
+    bowler.id
+  );
 
-  .catch(() => {
+  try {
 
-    bot.sendMessage(
-
-      groupChat,
-
-`⚠️ ${bowler.name} must start bot in DM first
-
-https://t.me/strangerfrndmusicbot
-
-Then press /start`
-
+    await bot.sendMessage(
+      bowler.id,
+      "🥎 Choose Bowling Number",
+      getBowlingButtons(roomCode) // keep your original buttons/options here
     );
 
-  });
+    console.log(
+      "DM SUCCESS:",
+      bowler.name
+    );
+
+  } catch (err) {
+
+    console.log(
+      "DM FAILED:",
+      bowler.name,
+      err.message
+    );
+
+    bot.sendMessage(
+      groupChat,
+      `⚠️ ${bowler.name} must start bot in DM first`
+    );
+
+  }
 
 }
 
@@ -952,7 +964,7 @@ if (
  room.choices[
         batsman.id
       ] = number;
-      
+
           console.log(
   "BATTER NUMBER:",
   batsman.name,
