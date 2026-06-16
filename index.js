@@ -941,8 +941,21 @@ if (
         bowlingPlayers[
           room.currentBowler
         ];
-    
+    if (
+  room.choices[
+    bowler.id
+  ] === undefined
+) {
 
+  bot.sendMessage(
+    room.groupChat,
+    "⏳ Wait for bowler to choose first"
+  );
+
+  return;
+
+}
+     
       if (
         room.choices[
           bowler.id
