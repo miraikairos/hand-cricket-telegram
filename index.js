@@ -922,16 +922,15 @@ async function startTeamGame(
         : "A";
 
   }
-
-  const battingPlayers =
-    room.battingTeam === "A"
-      ? room.teamA
-      : room.teamB;
+const battingPlayers =
+  room.battingTeam === "A"
+    ? room.battingOrderA
+    : room.battingOrderB;
 
   const bowlingPlayers =
-    room.bowlingTeam === "A"
-      ? room.teamA
-      : room.teamB;
+  room.bowlingTeam === "A"
+    ? room.bowlingOrderA
+    : room.bowlingOrderB;
 
   const batsman =
     battingPlayers[0];
@@ -1610,6 +1609,22 @@ console.log(
   return;
 
 }
+if (!batsman || !bowler) {
+
+  console.log("INVALID PLAYER STATE");
+
+  console.log("batsman =", batsman);
+  console.log("bowler =", bowler);
+
+  bot.answerCallbackQuery(
+    query.id,
+    {
+      text: "⚠️ Invalid batting/bowling state"
+    }
+  );
+
+  return;
+}
     room.choices[
       bowler.id
     ] = number;
@@ -1619,6 +1634,26 @@ console.log(
   bowler.name,
   number
 );
+console.log("========== TEAM DEBUG ==========");
+console.log("Batting Team:", room.battingTeam);
+console.log("Bowling Team:", room.bowlingTeam);
+
+console.log("currentBatsman:", room.currentBatsman);
+console.log("currentBowler:", room.currentBowler);
+
+console.log(
+  "battingPlayers:",
+  battingPlayers?.map(p => p.name)
+);
+
+console.log(
+  "bowlingPlayers:",
+  bowlingPlayers?.map(p => p.name)
+);
+
+console.log("batsman:", batsman);
+console.log("bowler:", bowler);
+console.log("================================");
     // ask batter after bowler selects
 if (
   room.choices[
