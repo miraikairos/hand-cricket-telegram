@@ -1431,13 +1431,20 @@ bot.on("callback_query", (query) => {
     rooms[roomCode];
 
   if (!room) return;
-
+console.log(
+  "BOWL CLICK:",
+  query.from.first_name,
+  "Room:",
+  roomCode,
+  "Number:",
+  number
+);
   // ======================================
   // NORMAL MODE
   // ======================================
 
   if (room.mode === "normal") {
-
+ 
     const batsman =
       room.players.find(
         p => p.id === room.batting
@@ -1447,16 +1454,38 @@ bot.on("callback_query", (query) => {
       room.players.find(
         p => p.id === room.bowling
       );
-
+    console.log(
+  "NORMAL MODE",
+  "Batsman:",
+  batsman.name,
+  "Bowler:",
+  bowler.name
+);
     room.choices[
       bowler.id
     ] = number;
-
+console.log(
+  "BOWLER PICKED:",
+  number
+);
+console.log(
+  "BATTER CHOICE:",
+  room.choices[batsman.id]
+);
     if (
   room.choices[
     batsman.id
   ] !== undefined
 ) {
+    console.log(
+    "WAITING FOR BATTER"
+  );
+
+  console.log(
+  "PROCESSING BALL",
+  room.choices[batsman.id],
+  room.choices[bowler.id]
+);
 
   playNormalBall(
     room,
