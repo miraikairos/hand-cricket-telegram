@@ -1115,7 +1115,7 @@ Check your DM and choose bowling number`
      console.log(
   "CURRENT BATSMAN:",
   batsman?.name,
-  room.currentBatsman
+     room.activeBatters[0]
 );
 
 console.log(
@@ -1229,7 +1229,7 @@ bot.onText(/\/status/, (msg) => {
 
   const batsman =
     battingPlayers[
-      room.currentBatsman
+        room.activeBatters[0]
     ];
 
   const bowler =
@@ -1254,7 +1254,7 @@ ${room.score}/${room.wickets}
 
 ${battingPlayers
   .map((p, i) =>
-    `${i + 1}. ${i === room.currentBatsman ? "➡️" : ""} ${p.name}`
+    `${i + 1}. ${i === room.activeBatters[0]? "➡️" : ""} ${p.name}`
   )
   .join("\n")}
 
@@ -1591,14 +1591,13 @@ console.log(
         ? room.battingOrderA
     : room.battingOrderB;
 
-    const bowlingPlayers =
-      room.bowlingTeam === "A"
-       ? room.battingOrderA
-    : room.battingOrderB;
-
+const bowlingPlayers =
+  room.bowlingTeam === "A"
+    ? room.bowlingOrderA
+    : room.bowlingOrderB;
     const batsman =
       battingPlayers[
-        room.currentBatsman
+          room.activeBatters[0]
       ];
 
     const bowler =
@@ -1646,7 +1645,7 @@ console.log("========== TEAM DEBUG ==========");
 console.log("Batting Team:", room.battingTeam);
 console.log("Bowling Team:", room.bowlingTeam);
 
-console.log("currentBatsman:", room.currentBatsman);
+console.log("currentBatsman:",    room.activeBatters[0]);
 console.log("currentBowler:", room.currentBowler);
 
 console.log(
@@ -1962,18 +1961,21 @@ room.lastActive = Date.now();
 
   // OUT
 
-  if (bat === bowl) {
+if (bat === bowl) {
 
-   
+  room.wickets++;
 
-    room.wickets++;
+  const outPlayer =
+    room.activeBatters.shift();
 
-    room.currentBatsman++;
+  room.outBatters.push(
+    outPlayer
+  );
 
-    message +=
-      `❌ OUT`;
+  message +=
+    `❌ OUT`;
 
-  }
+}
 
   // RUNS
 
@@ -2046,29 +2048,49 @@ const battingPlayers =
     : room.battingOrderB;
   
 
-  const bowlingPlayers =
-    room.bowlingTeam === "A"
-      ? room.battingOrderA
-    : room.battingOrderB;
-    // Change bowler after every over
-if (room.balls % 6 === 0 &&
-  bowlingPlayers.length > 1) {
+ const bowlingPlayers =
+  room.bowlingTeam === "A"
+    ? room.bowlingOrderA
+    : room.bowlingOrderB;
 
-  room.currentBowler++;
+    // Change bowler after every over
+if (room.balls % 6 === 0) {
+
+  // Rotate batter
 
   if (
-    room.currentBowler >=
-    bowlingPlayers.length
+    room.activeBatters.length > 1
   ) {
 
-    room.currentBowler = 0;
+    room.activeBatters.push(
+      room.activeBatters.shift()
+    );
+
+  }
+
+  // Rotate bowler
+
+  if (
+    bowlingPlayers.length > 1
+  ) {
+
+    room.currentBowler++;
+
+    if (
+      room.currentBowler >=
+      bowlingPlayers.length
+    ) {
+
+      room.currentBowler = 0;
+
+    }
 
   }
 
 }
   const newBatsman =
     battingPlayers[
-      room.currentBatsman
+          room.activeBatters[0]
     ];
 
   const newBowler =
@@ -2099,7 +2121,7 @@ if (room.balls % 6 === 0 &&
       room.wickets = 0;
       room.balls = 0;
 
-      room.currentBatsman = 0;
+  
 
 room.striker = 0;
 room.nonStriker = 1;
@@ -2113,6 +2135,15 @@ room.nextBatsman = 2;
 
       room.bowlingTeam =
         temp;
+        const secondBattingPlayers =
+  room.battingTeam === "A"
+    ? room.battingOrderA
+    : room.battingOrderB;
+
+room.activeBatters =
+  secondBattingPlayers.map((_, i) => i);
+
+room.outBatters = [];
 
       await bot.sendMessage(
 
