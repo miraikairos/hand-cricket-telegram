@@ -339,6 +339,25 @@ bot.onText(/\/join (.+)/, (msg, match) => {
     room.players.find(
       p => p.id === room.bowling
     );
+    if (!batsman) {
+
+  console.log(
+    "BATSMAN UNDEFINED",
+    room
+  );
+
+  return;
+}
+
+if (!bowler) {
+
+  console.log(
+    "BOWLER UNDEFINED",
+    room
+  );
+
+  return;
+}
 
   bot.sendMessage(
 
@@ -1454,6 +1473,7 @@ console.log(
       room.players.find(
         p => p.id === room.bowling
       );
+
     console.log(
   "NORMAL MODE",
   "Batsman:",
@@ -1940,16 +1960,6 @@ Need ${need} in ${ballsLeft} balls`;
     room.bowlingTeam === "A"
       ? room.teamA
       : room.teamB;
-
-  const newBatsman =
-    battingPlayers[
-      room.currentBatsman
-    ];
-
-  const newBowler =
-    bowlingPlayers[
-      room.currentBowler
-    ];
     // Change bowler after every over
 if (room.balls % 6 === 0 &&
   bowlingPlayers.length > 1) {
@@ -1966,6 +1976,16 @@ if (room.balls % 6 === 0 &&
   }
 
 }
+  const newBatsman =
+    battingPlayers[
+      room.currentBatsman
+    ];
+
+  const newBowler =
+    bowlingPlayers[
+      room.currentBowler
+    ];
+
 
   // ======================================
   // INNINGS END
