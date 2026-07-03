@@ -409,24 +409,14 @@ console.log("TEAMCREATE CALLED");
 
     teamA: [],
     teamB: [],
-   battingOrderA: [],
-battingOrderB: [],
 
-bowlingOrderA: [],
-bowlingOrderB: [],
     innings: 1,
 
     battingTeam: null,
     bowlingTeam: null,
 
+    currentBatsman: 0,
     currentBowler: 0,
-
-striker: 0,
-nonStriker: 1,
-nextBatsman: 2,
-
-strikerSelected: false,
-nonStrikerSelected: false,
 
     overs: null,
     maxBalls: null,
@@ -502,15 +492,7 @@ bot.onText(/\/joinA/, (msg) => {
     );
     return;
   }
- if (room.teamA.length >= 6) {
 
-  bot.sendMessage(
-    msg.chat.id,
-    "❌ Team A is full (6 players max)"
-  );
-
-  return;
-}
   room.teamA.push({
     id: msg.from.id,
     name: msg.from.first_name
@@ -563,15 +545,7 @@ bot.onText(/\/joinB/, (msg) => {
     );
     return;
   }
-if (room.teamB.length >= 6) {
 
-  bot.sendMessage(
-    msg.chat.id,
-    "❌ Team B is full (6 players max)"
-  );
-
-  return;
-}
   room.teamB.push({
     id: msg.from.id,
     name: msg.from.first_name
@@ -660,16 +634,6 @@ bot.onText(/\/overs (.+)/, (msg, match) => {
     rooms[roomCode];
 
   if (!room) return;
-  if (msg.from.id !== room.owner) {
-
-  bot.sendMessage(
-    msg.chat.id,
-    "❌ Only match creator can set overs"
-  );
-
-  return;
-
-}
  if (room.oversLocked) {
 
   bot.sendMessage(
@@ -754,13 +718,9 @@ bot.onText(/\/bat/, (msg) => {
 
   }
 
+  room.choiceDone = true;
+
 room.choiceDone = true;
-
-room.battingOrderA = [...room.teamA];
-room.battingOrderB = [...room.teamB];
-
-room.bowlingOrderA = [...room.teamA];
-room.bowlingOrderB = [...room.teamB];
 
 room.battingTeam =
   room.tossWinner;
@@ -836,18 +796,14 @@ bot.onText(/\/bowl/, (msg) => {
 
   }
 
+  room.choiceDone = true;
+
 room.choiceDone = true;
 
-room.battingOrderA = [...room.teamA];
-room.battingOrderB = [...room.teamB];
-
-room.bowlingOrderA = [...room.teamA];
-room.bowlingOrderB = [...room.teamB];
-
-room.battingTeam =
+room.bowlingTeam =
   room.tossWinner;
 
-room.bowlingTeam =
+room.battingTeam =
   room.tossWinner === "A"
     ? "B"
     : "A";
@@ -922,15 +878,16 @@ async function startTeamGame(
         : "A";
 
   }
-const battingPlayers =
-  room.battingTeam === "A"
-    ? room.battingOrderA
-    : room.battingOrderB;
+
+  const battingPlayers =
+    room.battingTeam === "A"
+      ? room.teamA
+      : room.teamB;
 
   const bowlingPlayers =
-  room.bowlingTeam === "A"
-    ? room.bowlingOrderA
-    : room.bowlingOrderB;
+    room.bowlingTeam === "A"
+      ? room.teamA
+      : room.teamB;
 
   const batsman =
     battingPlayers[0];
@@ -1318,8 +1275,8 @@ bot.onText(
 
 const battingPlayers =
   team === "A"
-    ? room.battingOrderA
-    : room.battingOrderB;
+    ? room.teamA
+    : room.teamB;
   const pos =
   parseInt(match[2]) - 1;
 
@@ -1389,13 +1346,10 @@ bot.onText(
 
     }
 
-  const team =
-  match[1];
-
-const bowlingPlayers =
-  team === "A"
-    ? room.bowlingOrderA
-    : room.bowlingOrderB; 
+   const bowlingPlayers =
+  room.bowlingTeam === "A"
+    ? room.teamA
+    : room.teamB;
     const pos =
   parseInt(match[2]) - 1;
 
@@ -1609,22 +1563,6 @@ console.log(
   return;
 
 }
-if (!batsman || !bowler) {
-
-  console.log("INVALID PLAYER STATE");
-
-  console.log("batsman =", batsman);
-  console.log("bowler =", bowler);
-
-  bot.answerCallbackQuery(
-    query.id,
-    {
-      text: "⚠️ Invalid batting/bowling state"
-    }
-  );
-
-  return;
-}
     room.choices[
       bowler.id
     ] = number;
@@ -1634,26 +1572,6 @@ if (!batsman || !bowler) {
   bowler.name,
   number
 );
-console.log("========== TEAM DEBUG ==========");
-console.log("Batting Team:", room.battingTeam);
-console.log("Bowling Team:", room.bowlingTeam);
-
-console.log("currentBatsman:", room.currentBatsman);
-console.log("currentBowler:", room.currentBowler);
-
-console.log(
-  "battingPlayers:",
-  battingPlayers?.map(p => p.name)
-);
-
-console.log(
-  "bowlingPlayers:",
-  bowlingPlayers?.map(p => p.name)
-);
-
-console.log("batsman:", batsman);
-console.log("bowler:", bowler);
-console.log("================================");
     // ask batter after bowler selects
 if (
   room.choices[
@@ -2092,10 +2010,6 @@ if (room.balls % 6 === 0 &&
       room.balls = 0;
 
       room.currentBatsman = 0;
-
-room.striker = 0;
-room.nonStriker = 1;
-room.nextBatsman = 2;
      room.currentBowler = 0;
       const temp =
         room.battingTeam;
