@@ -703,16 +703,25 @@ async function startSoloTurn(room) {
   room.currentBall = 0;
   room.currentScore = 0;
 
-  await bot.sendMessage(
+  const bowler =
+    chooseSoloBowler(room);
 
+  await bot.sendMessage(
     room.groupChat,
 
 `🏏 ${batter.name}'s Turn
 
-Send number 1-6`
+🥎 ${bowler.name} check DM`
+  );
+
+  await sendBowlerDM(
+    bowler,
+    String(room.groupChat),
+    room.groupChat
   );
 
 }
+
 function chooseSoloBowler(room) {
 
   const batter =
@@ -1237,29 +1246,7 @@ else  if (room.mode === "solo") {
     batter.id
   ] = number;
 
-  if (
-    !room.activeBowler
-  ) {
-
-    const bowler =
-      chooseSoloBowler(room);
-
-    sendBowlerDM(
-      bowler,
-      roomCode,
-      room.groupChat
-    );
-
-    bot.sendMessage(
-
-      room.groupChat,
-
-`🥎 ${bowler.name}
-check DM`
-    );
-
-    return;
-  }
+  
 
 }
 
@@ -2156,7 +2143,23 @@ async function playSoloBall(
     return;
 
   }
+const newBowler =
+  chooseSoloBowler(room);
 
+await bot.sendMessage(
+
+  room.groupChat,
+
+`🥎 ${newBowler.name}
+
+Check your DM and choose bowling number`
+);
+
+await sendBowlerDM(
+  newBowler,
+  String(room.groupChat),
+  room.groupChat
+);
   room.currentScore += bat;
 
   await bot.sendMessage(
