@@ -1245,7 +1245,24 @@ else  if (room.mode === "solo") {
   room.choices[
     batter.id
   ] = number;
+const bowler =
+  room.players.find(
+    p => p.id === room.activeBowler
+  );
 
+if (
+  room.choices[
+    bowler.id
+  ] !== undefined
+) {
+
+  playSoloBall(
+    room,
+    batter,
+    bowler
+  );
+
+}
   
 
 }
@@ -1760,7 +1777,12 @@ console.log(
   room.choices[
     bowler.id
   ] = number;
+ bot.sendMessage(
+  room.groupChat,
+  `🥎 ${bowler.name} selected bowling number
 
+🏏 ${batter.name} send your number now`
+);
   const batter =
     room.players[
       room.currentBatter
