@@ -614,6 +614,131 @@ bot.onText(/\/startmatch/, (msg) => {
   );
 
 });
+bot.onText(/\/solo/, (msg) => {
+
+  const roomCode = String(msg.chat.id);
+
+  rooms[roomCode] = {
+    mode: "solo",
+    groupChat: msg.chat.id,
+
+    players: [],
+
+    currentBatter: 0,
+    currentBall: 0,
+
+    currentScore: 0,
+
+    leaderboard: {},
+
+    activeBowler: null,
+
+    choices: {},
+
+    started: false
+  };
+
+  bot.sendMessage(
+    msg.chat.id,
+
+`🏏 SOLO TOURNAMENT CREATED
+
+Join:
+/joinsolo
+
+Start:
+/startsolo`
+  );
+
+});
+bot.onText(/\/joinsolo/, (msg) => {
+
+  const room =
+    rooms[String(msg.chat.id)];
+
+  if (
+    !room ||
+    room.mode !== "solo"
+  ) return;
+
+  if (
+    room.players.some(
+      p => p.id === msg.from.id
+    )
+  ) return;
+
+  room.players.push({
+    id: msg.from.id,
+    name: msg.from.first_name
+  });
+
+  bot.sendMessage(
+    msg.chat.id,
+    `✅ ${msg.from.first_name} joined`
+  );
+
+});
+bot.onText(/\/startsolo/, async (msg) => {
+
+  const room =
+    rooms[String(msg.chat.id)];
+
+  if (
+    !room ||
+    room.mode !== "solo"
+  ) return;
+
+  room.started = true;
+
+  await startSoloTurn(room);
+
+});
+async function startSoloTurn(room) {
+
+  const batter =
+    room.players[
+      room.currentBatter
+    ];
+
+  room.currentBall = 0;
+  room.currentScore = 0;
+
+  await bot.sendMessage(
+
+    room.groupChat,
+
+`🏏 ${batter.name}'s Turn
+
+Send number 1-6`
+  );
+
+}
+function chooseSoloBowler(room) {
+
+  const batter =
+    room.players[
+      room.currentBatter
+    ];
+
+  const available =
+    room.players.filter(
+      p => p.id !== batter.id
+    );
+
+  const bowler =
+    available[
+      Math.floor(
+        Math.random() *
+        available.length
+      )
+    ];
+
+  room.activeBowler =
+    bowler.id;
+
+  return bowler;
+
+}
 // ======================================
 // RESEND DM
 // ======================================
@@ -1095,7 +1220,48 @@ Check your DM and choose bowling number`
     }
 
   }
-  
+  /////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  /////SOLO MODEEEEEEEEEEEE\\\\\\\\\\\\\\\
+else  if (room.mode === "solo") {
+
+  const batter =
+    room.players[
+      room.currentBatter
+    ];
+
+  if (
+    msg.from.id !== batter.id
+  ) return;
+
+  room.choices[
+    batter.id
+  ] = number;
+
+  if (
+    !room.activeBowler
+  ) {
+
+    const bowler =
+      chooseSoloBowler(room);
+
+    sendBowlerDM(
+      bowler,
+      roomCode,
+      room.groupChat
+    );
+
+    bot.sendMessage(
+
+      room.groupChat,
+
+`🥎 ${bowler.name}
+check DM`
+    );
+
+    return;
+  }
+
+}
 
   // ======================================
   // TEAM
@@ -1579,6 +1745,55 @@ console.log(
 );
 
   }
+  ///\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  ///SOLO MODEEEEEEEEEEEEEEE\\\\\\\\\\\\\\\\\
+ else if (room.mode === "solo") {
+
+  const bowler =
+    room.players.find(
+      p =>
+        p.id ===
+        room.activeBowler
+    );
+
+  if (
+    query.from.id !== bowler.id
+  ) {
+
+    return bot.answerCallbackQuery(
+      query.id,
+      {
+        text:
+          "Not your turn"
+      }
+    );
+
+  }
+
+  room.choices[
+    bowler.id
+  ] = number;
+
+  const batter =
+    room.players[
+      room.currentBatter
+    ];
+
+  if (
+    room.choices[
+      batter.id
+    ] !== undefined
+  ) {
+
+    playSoloBall(
+      room,
+      batter,
+      bowler
+    );
+
+  }
+
+}
 
   // ======================================
   // TEAM MODE
@@ -1916,6 +2131,119 @@ bot.sendVideo(
   roomCode
 );
 room.processing = false;
+}
+//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+////SOLO MODEEEEEEEEEEEEEEEE\\\\\\\\\\\\
+////////////////////////////////////////
+async function playSoloBall(
+  room,
+  batter,
+  bowler
+) {
+
+  const bat =
+    room.choices[batter.id];
+
+  const bowl =
+    room.choices[bowler.id];
+
+  room.currentBall++;
+
+  if (bat === bowl) {
+
+    await finishSoloTurn(room);
+
+    return;
+
+  }
+
+  room.currentScore += bat;
+
+  await bot.sendMessage(
+
+    room.groupChat,
+
+`🏏 ${batter.name}: ${bat}
+🥎 ${bowler.name}: ${bowl}
+
++${bat} Runs
+
+Score:
+${room.currentScore}`
+  );
+
+  room.choices = {};
+  room.activeBowler = null;
+
+  if (
+    room.currentBall >= 6
+  ) {
+
+    await finishSoloTurn(room);
+
+  }
+
+}
+async function finishSoloTurn(room) {
+
+  const batter =
+    room.players[
+      room.currentBatter
+    ];
+
+  room.leaderboard[
+    batter.name
+  ] = room.currentScore;
+
+  await bot.sendMessage(
+
+    room.groupChat,
+
+`✅ ${batter.name}
+
+Final Score:
+${room.currentScore}`
+  );
+
+  room.currentBatter++;
+
+  room.choices = {};
+  room.activeBowler = null;
+
+  if (
+    room.currentBatter >=
+    room.players.length
+  ) {
+
+    const sorted =
+      Object.entries(
+        room.leaderboard
+      ).sort(
+        (a,b) => b[1]-a[1]
+      );
+
+    let text =
+      "🏆 LEADERBOARD\n\n";
+
+    sorted.forEach(
+      ([name, score], i) => {
+
+        text +=
+          `${i+1}. ${name} - ${score}\n`;
+
+      }
+    );
+
+    await bot.sendMessage(
+      room.groupChat,
+      text
+    );
+
+    return;
+  }
+
+  await startSoloTurn(room);
+
 }
 
 // ======================================
