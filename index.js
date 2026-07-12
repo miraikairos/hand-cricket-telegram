@@ -762,8 +762,8 @@ bot.onText(/\/resenddm/, (msg) => {
 
   const bowlingPlayers =
     room.bowlingTeam === "A"
-      ? room.teamA
-      : room.teamB;
+      ? room.bowlingOrderA
+      : room.bowlingOrderB;
 
   const bowler =
     bowlingPlayers[
@@ -1307,8 +1307,8 @@ if (
  
       const bowlingPlayers =
         room.bowlingTeam === "A"
-          ? room.teamA
-          : room.teamB;
+          ? room.bowlingOrderA
+          : room.bowlingOrderB;
 
       const bowler =
         bowlingPlayers[
@@ -1389,13 +1389,13 @@ bot.onText(/\/status/, (msg) => {
 
   const battingPlayers =
     room.battingTeam === "A"
-      ? room.teamA
-      : room.teamB;
+      ? room.battingOrderA
+      : room.battingOrderB;
 
   const bowlingPlayers =
     room.bowlingTeam === "A"
-      ? room.teamA
-      : room.teamB;
+      ? room.bowlingOrderA
+      : room.bowlingOrderB;
 
   const batsman =
     battingPlayers[
@@ -1777,16 +1777,18 @@ console.log(
   room.choices[
     bowler.id
   ] = number;
+
+  const batter =
+    room.players[
+      room.currentBatter
+    ];
+
  bot.sendMessage(
   room.groupChat,
   `🥎 ${bowler.name} selected bowling number
 
 🏏 ${batter.name} send your number now`
 );
-  const batter =
-    room.players[
-      room.currentBatter
-    ];
 
   if (
     room.choices[
@@ -2511,8 +2513,8 @@ ${room.target}
 
       const secondBowling =
         room.bowlingTeam === "A"
-          ? room.teamA
-          : room.teamB;
+          ? room.bowlingOrderA
+          : room.bowlingOrderB;
      await bot.sendMessage(
 
   room.groupChat,
