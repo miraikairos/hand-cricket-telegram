@@ -786,6 +786,12 @@ bot.onText(/\/resenddm/, (msg) => {
 // ======================================
 // OVERS
 // ======================================
+bot.onText(/\/overs(\d+)/, (msg) => {
+  bot.sendMessage(
+    msg.chat.id,
+    "❌ Use: /overs 1, /overs 2, /overs 3 or /overs 5"
+  );
+});
 
 bot.onText(/\/overs (.+)/, (msg, match) => {
 
@@ -818,7 +824,12 @@ bot.onText(/\/overs (.+)/, (msg, match) => {
 }
   const overs =
     Number(match[1]);
-
+  if (![1, 2, 3, 5].includes(overs)) {
+  return bot.sendMessage(
+    msg.chat.id,
+    "❌ Allowed overs: 1, 2, 3, 5"
+  );
+}
   room.overs = overs;
 
   room.maxBalls =
