@@ -991,10 +991,10 @@ room.battingOrderB = [...room.teamB];
 room.bowlingOrderA = [...room.teamA];
 room.bowlingOrderB = [...room.teamB];
 
-room.battingTeam =
+room.bowlingTeam =
   room.tossWinner;
 
-room.bowlingTeam =
+room.battingTeam =
   room.tossWinner === "A"
     ? "B"
     : "A";
