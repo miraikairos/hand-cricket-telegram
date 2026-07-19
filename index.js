@@ -1339,6 +1339,19 @@ if (
   return;
 
 }
+
+// Ignore a repeat/duplicate message once this ball's number is already
+// recorded, so it can't overwrite state after the ball has been played.
+if (
+  room.choices[
+    batsman.id
+  ] !== undefined
+) {
+
+  return;
+
+}
+
  room.choices[
         batsman.id
       ] = number;
@@ -1663,7 +1676,7 @@ room.lineupLocked = true;
 // CALLBACK
 // ======================================
 
-bot.on("callback_query", (query) => {
+bot.on("callback_query", async (query) => {
 
   const data =
     query.data;
@@ -1869,10 +1882,35 @@ if (!batsman || !bowler) {
 
   return;
 }
+
+// Guard against a double-tap on the same "choose bowling number" DM:
+// once the bowler has already picked for this ball, ignore repeat taps
+// instead of silently overwriting the number after the ball may have
+// already been played and rotated to someone else.
+if (room.choices[bowler.id] !== undefined) {
+
+  bot.answerCallbackQuery(
+    query.id,
+    {
+      text: "Already chosen, waiting for batsman"
+    }
+  );
+
+  return;
+
+}
+
     room.choices[
       bowler.id
     ] = number;
-   
+
+  // Disable the DM keyboard now that it's been used, so a second tap
+  // can't reach this handler again for the same message.
+  bot.editMessageReplyMarkup(
+    { inline_keyboard: [] },
+    { chat_id: query.message.chat.id, message_id: query.message.message_id }
+  ).catch(() => {});
+
   console.log(
   "BOWLER NUMBER:",
   bowler.name,
@@ -1905,13 +1943,22 @@ if (
   ] !== undefined
 ) {
 
-  playTeamBall(
+  await playTeamBall(
     room,
     roomCode,
     room.groupChat,
     batsman,
     bowler
   );
+
+  bot.answerCallbackQuery(
+    query.id,
+    {
+      text: "Bowling number selected"
+    }
+  );
+
+  return;
 
 }
 
