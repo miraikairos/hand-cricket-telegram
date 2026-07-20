@@ -406,6 +406,7 @@ console.log("TEAMCREATE CALLED");
     owner: msg.from.id,
     ownerName: msg.from.first_name,
     mode: "team",
+    lastActive: Date.now(),
 
     teamA: [],
     teamB: [],
@@ -518,6 +519,8 @@ bot.onText(/\/joinA/, (msg) => {
     name: msg.from.first_name
   });
 
+  room.lastActive = Date.now();
+
   bot.sendMessage(
     msg.chat.id,
     `✅ ${msg.from.first_name} joined Team A`
@@ -579,6 +582,8 @@ if (room.teamB.length >= 6) {
     name: msg.from.first_name
   });
 
+  room.lastActive = Date.now();
+
   bot.sendMessage(
     msg.chat.id,
     `✅ ${msg.from.first_name} joined Team B`
@@ -599,6 +604,8 @@ bot.onText(/\/startmatch/, (msg) => {
     rooms[roomCode];
 
   if (!room) return;
+
+  room.lastActive = Date.now();
 
   bot.sendMessage(
 
@@ -835,6 +842,7 @@ bot.onText(/\/overs (.+)/, (msg, match) => {
   room.maxBalls =
     overs * 6;
   room.oversLocked = true;
+  room.lastActive = Date.now();
   room.tossWinner =
     Math.random() < 0.5
       ? "A"
@@ -902,7 +910,7 @@ bot.onText(/\/bat/, (msg) => {
   }
 
 room.choiceDone = true;
-
+room.lastActive = Date.now();
 room.battingOrderA = [...room.teamA];
 room.battingOrderB = [...room.teamB];
 
@@ -984,7 +992,7 @@ bot.onText(/\/bowl/, (msg) => {
   }
 
 room.choiceDone = true;
-
+room.lastActive = Date.now();
 room.battingOrderA = [...room.teamA];
 room.battingOrderB = [...room.teamB];
 
@@ -1148,8 +1156,13 @@ Check your DM and choose bowling number`
 
   }
 
+  const trimmedText =
+    (msg.text || "").trim();
+
   const number =
-    parseInt(msg.text);
+    /^[1-6]$/.test(trimmedText)
+      ? parseInt(trimmedText)
+      : NaN;
 
   if (
     isNaN(number) ||
@@ -1666,6 +1679,7 @@ bot.onText(/\/begin/, (msg) => {
 }
 room.matchStarted = true;
 room.lineupLocked = true;
+room.lastActive = Date.now();
   startTeamGame(
     msg,
     room.battingTeam === room.tossWinner
@@ -2731,12 +2745,11 @@ setInterval(() => {
 
     if (!room) return;
 
-    if (
-      Date.now() - (room.lastActive || 0)
-      > 1000 * 60 * 30
-    ) {
-
-      delete rooms[code];
+   if (
+    room.lastActive &&
+    Date.now() - room.lastActive > 30 * 60 * 1000
+) {
+    delete rooms[code];
 
       console.log(
         "Deleted inactive room:",
