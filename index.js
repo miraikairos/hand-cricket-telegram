@@ -2775,3 +2775,27 @@ app.listen(PORT, () => {
   );
 
 });
+
+// ======================================
+// START POLLING
+// ======================================
+
+bot.startPolling();
+
+bot.on("polling_error", (err) => {
+
+  console.log(
+    "POLLING ERROR:",
+    err
+  );
+
+});
+
+bot.on("error", (err) => {
+
+  console.log(
+    "BOT ERROR:",
+    err
+  );
+
+});
