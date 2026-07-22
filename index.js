@@ -1178,7 +1178,7 @@ Check your DM and choose bowling number`
 
       if (!room) return false;
 
-      // NORMAL
+      // NORMAL (DM-based, no chat scoping needed)
       if (room.mode === "normal") {
 
         return room.players.some(
@@ -1187,18 +1187,42 @@ Check your DM and choose bowling number`
 
       }
 
-      // TEAM
-      return (
+      // TEAM (group-based: must also match the room's own group chat,
+      // otherwise a player in two simultaneous team matches across
+      // different groups can resolve the wrong room)
+      if (room.mode === "team") {
 
-        room.teamA.some(
+        if (room.groupChat !== msg.chat.id) return false;
+
+        return (
+
+          room.teamA.some(
+            p => p.id === msg.from.id
+          ) ||
+
+          room.teamB.some(
+            p => p.id === msg.from.id
+          )
+
+        );
+
+      }
+
+      // SOLO (group-based; also chat-scoped). Previously this fell
+      // through to the TEAM branch above, which called room.teamA.some(...)
+      // on a solo room object where teamA is undefined — throwing and
+      // aborting the whole lookup for that message.
+      if (room.mode === "solo") {
+
+        if (room.groupChat !== msg.chat.id) return false;
+
+        return room.players.some(
           p => p.id === msg.from.id
-        ) ||
+        );
 
-        room.teamB.some(
-          p => p.id === msg.from.id
-        )
+      }
 
-      );
+      return false;
 
     });
 
