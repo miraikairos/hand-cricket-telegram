@@ -1415,6 +1415,28 @@ if (
 
       }
 
+    } else if (batsman) {
+
+      // A valid 1-6 message from someone who ISN'T the current batsman.
+      // Most commonly this is a real batter posting as an anonymous
+      // group admin, where Telegram reports msg.from.id as
+      // GroupAnonymousBot instead of their real user id, so the
+      // === check above never matches. Surface it instead of silently
+      // dropping the message, so it's diagnosable instead of a mystery.
+      console.log(
+        "IGNORED NUMBER — sender is not current batsman:",
+        "from:", msg.from.id, msg.from.first_name,
+        "expected batsman:", batsman.id, batsman.name,
+        "is_anonymous_admin:", msg.from.username === "GroupAnonymousBot"
+      );
+
+      if (msg.from.username === "GroupAnonymousBot") {
+        bot.sendMessage(
+          room.groupChat,
+          `⚠️ ${batsman.name}, if you're posting anonymously as an admin, please turn that off for this chat — I can't tell it's you otherwise.`
+        );
+      }
+
     }
 
   }
