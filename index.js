@@ -2304,6 +2304,11 @@ await sendBowlerDM(
 );
   room.currentScore += bat;
 
+  await sendRunVideo(
+    room.groupChat,
+    bat
+  );
+
   await bot.sendMessage(
 
     room.groupChat,
@@ -2318,7 +2323,6 @@ ${room.currentScore}`
   );
 
   room.choices = {};
-  room.activeBowler = null;
 
   if (
     room.currentBall >= 6
