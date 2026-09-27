@@ -2914,10 +2914,49 @@ setInterval(() => {
 const PORT =
   process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
 
   console.log(
     `Server running on ${PORT}`
   );
+
+  // Register (or re-register) the webhook on every boot, explicitly
+  // asking for both message and callback_query updates. Without this,
+  // whatever webhook config happens to already be set on Telegram's
+  // side keeps being used — including if it was ever set with a
+  // restricted allowed_updates list that silently drops button taps.
+  const baseUrl =
+    process.env.WEBHOOK_URL || process.env.RENDER_EXTERNAL_URL;
+
+  if (!baseUrl) {
+
+    console.log(
+      "WEBHOOK ERROR: No RENDER_EXTERNAL_URL or WEBHOOK_URL env var found — cannot set webhook."
+    );
+
+    return;
+
+  }
+
+  try {
+
+    await bot.setWebHook(
+      `${baseUrl}/bot${token}`,
+      { allowed_updates: ["message", "callback_query"] }
+    );
+
+    console.log(
+      "WEBHOOK SET:",
+      `${baseUrl}/bot${token}`
+    );
+
+  } catch (err) {
+
+    console.log(
+      "WEBHOOK SET FAILED:",
+      err.message
+    );
+
+  }
 
 });
