@@ -1435,6 +1435,33 @@ if (
           room.groupChat,
           `⚠️ ${batsman.name}, if you're posting anonymously as an admin, please turn that off for this chat — I can't tell it's you otherwise.`
         );
+      } else {
+
+        // Not anonymous admin either — check whether this is the current
+        // bowler, who's supposed to be choosing their number from the
+        // inline buttons in DM, typing it into the group instead. That
+        // message would otherwise just vanish with no explanation.
+        const bowlingPlayers =
+          room.bowlingTeam === "A"
+            ? room.bowlingOrderA
+            : room.bowlingOrderB;
+
+        const bowler =
+          bowlingPlayers[room.currentBowler];
+
+        if (
+          bowler &&
+          msg.from.id === bowler.id &&
+          room.choices[bowler.id] === undefined
+        ) {
+
+          bot.sendMessage(
+            room.groupChat,
+            `🥎 ${bowler.name}, please choose your bowling number from the buttons in your DM with me — typing it here won't register.`
+          );
+
+        }
+
       }
 
     }
