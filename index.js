@@ -1772,6 +1772,8 @@ bot.on("callback_query", async (query) => {
     !data.startsWith("bowl_")
   ) return;
 
+  try {
+
   const parts =
     data.split("_");
 
@@ -1830,6 +1832,19 @@ console.log(
       room.players.find(
         p => p.id === room.bowling
       );
+
+    if (!batsman || !bowler) {
+
+      bot.answerCallbackQuery(
+        query.id,
+        {
+          text: "⚠️ Invalid match state"
+        }
+      );
+
+      return;
+
+    }
 
     console.log(
   "NORMAL MODE",
@@ -1892,6 +1907,19 @@ console.log(
         p.id ===
         room.activeBowler
     );
+
+  if (!bowler) {
+
+    bot.answerCallbackQuery(
+      query.id,
+      {
+        text: "⚠️ Invalid bowler state"
+      }
+    );
+
+    return;
+
+  }
 
   if (
     query.from.id !== bowler.id
@@ -1963,18 +1991,7 @@ const bowlingPlayers =
       bowlingPlayers[
         room.currentBowler
       ];
-    if (query.from.id !== bowler.id) {
 
-  bot.answerCallbackQuery(
-    query.id,
-    {
-      text: "❌ Not your turn to bowl"
-    }
-  );
-
-  return;
-
-}
 if (!batsman || !bowler) {
 
   console.log("INVALID PLAYER STATE");
@@ -1990,6 +2007,19 @@ if (!batsman || !bowler) {
   );
 
   return;
+}
+
+if (query.from.id !== bowler.id) {
+
+  bot.answerCallbackQuery(
+    query.id,
+    {
+      text: "❌ Not your turn to bowl"
+    }
+  );
+
+  return;
+
 }
 
 // Guard against a double-tap on the same "choose bowling number" DM:
@@ -2087,6 +2117,23 @@ bot.sendMessage(
       "Bowling number selected"
   }
 );
+  }
+
+  } catch (err) {
+
+    console.log(
+      "CALLBACK_QUERY ERROR:",
+      err
+    );
+
+    bot.answerCallbackQuery(
+      query.id,
+      {
+        text: "⚠️ Something went wrong, please try again.",
+        show_alert: true
+      }
+    ).catch(() => {});
+
   }
 
 });
