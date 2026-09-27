@@ -1784,7 +1784,29 @@ bot.on("callback_query", async (query) => {
   const room =
     rooms[roomCode];
 
-  if (!room) return;
+  if (!room) {
+
+    // Most commonly: the server restarted (redeploy, crash, host
+    // sleep/wake) since this match started, so in-memory `rooms` lost
+    // this room entirely. Surface it instead of leaving the tap
+    // spinning forever with no feedback and no log.
+    console.log(
+      "BOWL CLICK IGNORED — room not found:",
+      "roomCode:", roomCode,
+      "from:", query.from.id, query.from.first_name
+    );
+
+    bot.answerCallbackQuery(
+      query.id,
+      {
+        text: "⚠️ This match session has expired. Please start a new match.",
+        show_alert: true
+      }
+    ).catch(() => {});
+
+    return;
+
+  }
 console.log(
   "BOWL CLICK:",
   query.from.first_name,
